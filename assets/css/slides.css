@@ -56,12 +56,16 @@ h2 { font-size: clamp(30px, 5vw, 52px); line-height: 1.2; margin-bottom: 16px; l
   border-bottom: 1px solid rgba(123, 92, 196, .14);
 }
 .brand img { height: 40px; width: auto; display: block; }
+.brand { display: flex; align-items: center; gap: 12px; }
+.brand-text { display: flex; flex-direction: column; line-height: 1.25; }
+.brand-text strong { font-size: 18px; font-weight: 700; color: var(--violet-d); letter-spacing: .06em; }
+.brand-text small { font-size: 12px; color: var(--muted); letter-spacing: .12em; }
 .top-links { display: flex; align-items: center; gap: 20px; font-size: 14px; }
 .top-links a { color: var(--muted); }
 .top-links a:hover { color: var(--violet-d); }
 .top-links .pill { color: var(--violet-d); border: 1px solid var(--violet-l); padding: 6px 16px; border-radius: 999px; }
 .top-links .pill:hover { background: var(--grad); border-color: transparent; color: #fff; }
-@media (max-width: 560px) { .top-links { gap: 12px; font-size: 13px; } .brand img { height: 34px; } }
+@media (max-width: 560px) { .top-links { gap: 12px; font-size: 13px; } .brand img { height: 34px; } .brand { gap: 8px; } .brand-text strong { font-size: 15px; letter-spacing: .03em; } .brand-text small { font-size: 10px; letter-spacing: .06em; } }
 
 /* ---------- 左側圓點導覽 ---------- */
 .dots {
