@@ -12,7 +12,13 @@ eleventyComputed:
 ---
   <!-- ======= Header（白色半透明底 + 深紫字 logo） ======= -->
   <header class="top">
-    <a class="brand" href="#hero"><img src="assets/img/logo-dark.png" alt="{{ t.meta.siteName }}"></a>
+   <a class="brand" href="#hero">
+  <img src="assets/img/logo-dark.png" alt="{{ t.meta.siteName }}">
+  <span class="brand-text">
+    <strong>{{ t.hero.title }}</strong>
+    <small>{{ t.hero.subtitle }}</small>
+  </span>
+</a>
     <nav class="top-links">
       {%- if flightHistoryHref %}
       <a href="{{ flightHistoryHref }}">{{ t.nav.flightHistory }}</a>
