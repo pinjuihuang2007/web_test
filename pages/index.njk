@@ -1,0 +1,253 @@
+---
+layout: layouts/slides.njk
+pagination:
+  data: site.locales
+  size: 1
+  alias: pageLocale
+permalink: "{{ pageLocale.permalink }}"
+navPrefix: ""
+activeNav: home
+eleventyComputed:
+  pageHref: "{{ pageLocale.href }}"
+---
+  <!-- ======= Header（白色半透明底 + 深紫字 logo） ======= -->
+  <header class="top">
+    <a class="brand" href="#hero"><img src="assets/img/logo-dark.png" alt="{{ t.meta.siteName }}"></a>
+    <nav class="top-links">
+      {%- if flightHistoryHref %}
+      <a href="{{ flightHistoryHref }}">{{ t.nav.flightHistory }}</a>
+      {%- endif %}
+      <a href="{{ languageHref }}">{{ t.nav.languageSwitch }}</a>
+      <a class="pill" href="{{ site.crewLoginUrl }}">{{ t.nav.crewLogin }}</a>
+    </nav>
+  </header>
+
+  <!-- ======= 左側頁面導覽點 ======= -->
+  <nav class="dots" aria-label="Sections">
+    <a href="#hero" title="{{ t.nav.home }}"></a>
+    <a href="#why-us" title="{{ t.whyUs.welcome }}"></a>
+    <a href="#announcements" title="{{ t.announcements.heading }}"></a>
+    <a href="#live" title="{{ t.live.heading }}"></a>
+    <a href="#dispatch" title="{{ t.dispatch.heading }}"></a>
+    <a href="#statistics" title="{{ t.statistics.heading }}"></a>
+    <a href="#member" title="{{ t.member.heading }}"></a>
+    <a href="#hiring" title="{{ t.hiring.heading }}"></a>
+    <a href="#faq" title="{{ t.faq.heading }}"></a>
+    <a href="#partners" title="{{ t.partners.heading }}"></a>
+  </nav>
+
+  <main>
+
+  <!-- ======= 1 首頁（影片背景） ======= -->
+  <section class="slide hero" id="hero">
+    <div class="video" aria-hidden="true">
+      <video id="hero-video" autoplay muted loop playsinline preload="metadata"
+             poster="assets/img/hero-bg.jpg" data-fallback="{{ site.heroVideoEmbedUrl }}">
+        <source src="{{ site.heroVideoFile }}" type="video/mp4">
+      </video>
+    </div>
+    <div class="mask"></div>
+    <div class="inner">
+      <p class="tag fade">CHINA AIRLINES VIRTUAL</p>
+      <h1 class="fade" data-key="hero_title">{{ t.hero.title }}</h1>
+      <p class="lead fade" data-key="hero_subtitle">{{ t.hero.subtitle }}</p>
+      <p class="notice fade" data-key="notice" hidden></p>
+      <div class="fade"><a class="btn" href="{{ site.discordUrl }}" target="_blank" rel="noopener">{{ t.hero.cta }}</a></div>
+    </div>
+    <div class="scroll-hint">SCROLL ↓</div>
+  </section>
+
+  <!-- ======= 2 關於我們 ======= -->
+  <section class="slide" id="why-us">
+    <div class="inner">
+      <p class="tag fade">ABOUT</p>
+      <h2 class="fade" data-key="whyus_heading">{{ t.whyUs.heading }}</h2>
+      <p class="sub fade">{{ t.whyUs.bodyHtml | safe }}</p>
+      <div class="cols fade">
+        {%- for box in t.whyUs.boxes %}
+        <div class="col"><i class="{{ box.icon }}"></i><h3>{{ box.title }}</h3><p>{{ box.text }}</p></div>
+        {%- endfor %}
+      </div>
+      <p class="welcome fade" data-key="whyus_welcome">{{ t.whyUs.welcome }}</p>
+    </div>
+  </section>
+
+  <!-- ======= 3 活動公告（內容由後台管理） ======= -->
+  <section class="slide tint-p" id="announcements">
+    <div class="inner">
+      <p class="tag fade">ANNOUNCEMENTS</p>
+      <h2 class="fade">{{ t.announcements.heading }}</h2>
+      <div id="announcement-list" class="ann-grid"></div>
+      <p id="announcement-empty" class="empty">{{ t.announcements.empty }}</p>
+    </div>
+  </section>
+
+  <!-- ======= 4 台灣即時航班（VATSIM 公開資料，不顯示飛行員姓名） ======= -->
+  <section class="slide tint-l" id="live">
+    <div class="inner">
+      <p class="tag fade">LIVE</p>
+      <h2 class="fade">{{ t.live.heading }}</h2>
+      <p class="sub fade">{{ t.live.intro }}</p>
+      <div class="board fade">
+        <table>
+          <thead>
+            <tr>
+              <th>{{ t.live.cols.status }}</th><th>{{ t.live.cols.callsign }}</th><th>{{ t.live.cols.type }}</th>
+              <th>{{ t.live.cols.from }}</th><th>{{ t.live.cols.to }}</th>
+            </tr>
+          </thead>
+          <tbody id="live-body" data-dep="{{ t.live.dep }}" data-arr="{{ t.live.arr }}"
+                 data-empty="{{ t.live.empty }}" data-error="{{ t.live.error }}">
+            <tr><td colspan="5" class="note">{{ t.live.loading }}</td></tr>
+          </tbody>
+        </table>
+      </div>
+      <p class="updated" id="live-updated" data-label="{{ t.live.updated }}"></p>
+    </div>
+  </section>
+
+  <!-- ======= 5 簽派系統 ======= -->
+  <section class="slide" id="dispatch">
+    <div class="inner split">
+      <div>
+        <p class="tag fade">DISPATCH</p>
+        <h2 class="fade">{{ t.dispatch.heading }}</h2>
+        <p class="sub fade">{{ t.dispatch.intro }}</p>
+        <ul class="list fade">
+          {%- for box in t.dispatch.boxes %}
+          <li><strong>{{ box.title }}</strong><span>{{ box.text }}</span></li>
+          {%- endfor %}
+        </ul>
+      </div>
+      <img class="fade shot" data-img-key="dispatch_image" src="assets/img/dispatch-intro.jpg" alt="{{ t.dispatch.heading }}" loading="lazy" decoding="async">
+    </div>
+  </section>
+
+  <!-- ======= 5 統計數據（資料來自 assets/statistics.json 與 members.csv） ======= -->
+  <section class="slide tint-l strong" id="statistics">
+    <div class="inner">
+      <p class="tag fade">STATISTICS</p>
+      <h2 class="fade">{{ t.statistics.heading }}</h2>
+      <div class="stats fade" id="stats" data-unit-legs="{{ t.statistics.unitLegs }}" data-unit-hours="{{ t.statistics.unitHours }}">
+        <div><b id="purecounter-pilots">0</b><span>{{ t.counts.pilots }}</span></div>
+        <div><b id="purecounter-legs">0</b><span>{{ t.counts.legs }}</span></div>
+        <div><b id="purecounter-time">0</b><span>{{ t.counts.hours }}</span></div>
+      </div>
+      <div class="tabs fade" role="tablist">
+        {%- for tab in site.statisticsTabs %}
+        <button class="tab" type="button" role="tab" aria-selected="{% if loop.first %}true{% else %}false{% endif %}" data-target="{{ tab.target }}">{{ t.statistics.tabs[tab.key] }}</button>
+        {%- endfor %}
+      </div>
+      <div class="fade">
+        {%- for tab in site.statisticsTabs %}
+        <ol class="rank" id="{{ tab.target }}"{% if not loop.first %} hidden{% endif %}></ol>
+        {%- endfor %}
+      </div>
+      {%- set latest = flightData.latest %}
+      {%- if latest %}
+      <p class="latest fade"><a href="flight-history-{{ latest.id }}.html">{{ latest.date | slashDate }} {{ t.flightHistory.recordSuffix }} →</a></p>
+      {%- endif %}
+    </div>
+  </section>
+
+  <!-- ======= 6 會員數位識別證（vAMSYS 授權碼 + PKCE 登入，資料只在本人瀏覽器顯示） ======= -->
+  <section class="slide" id="member">
+    <div class="inner narrow">
+      <p class="tag fade">MEMBER ID</p>
+      <h2 class="fade">{{ t.member.heading }}</h2>
+      <p class="sub fade">{{ t.member.intro }}</p>
+      <div class="fade" id="member-box"
+           data-loading="{{ t.member.loading }}" data-denied="{{ t.member.denied }}" data-expired="{{ t.member.expired }}"
+           data-failed="{{ t.member.failed }}" data-network="{{ t.member.network }}"
+           data-rank="{{ t.member.rank }}" data-hours="{{ t.member.hours }}" data-flights="{{ t.member.flights }}"
+           data-joined="{{ t.member.joined }}" data-other="{{ t.member.other }}" data-logout="{{ t.member.logout }}">
+        <div id="member-login" class="login-prompt">
+          <button class="btn" type="button" id="member-login-btn">{{ t.member.login }}</button>
+        </div>
+        <p id="member-status" class="empty" role="status" hidden></p>
+        <div id="member-card" class="idcard" hidden></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ======= 7 人才招募 ======= -->
+  <section class="slide tint-p" id="hiring">
+    <div class="inner">
+      <p class="tag fade">JOIN US</p>
+      <h2 class="fade">{{ t.hiring.heading }}</h2>
+      <p class="sub fade">{{ t.hiring.intro }}</p>
+      <div class="cols social-cards fade">
+        {%- for box in t.hiring.boxes %}
+        <a class="col card" href="{% if box.link == 'discord' %}{{ site.discordUrl }}{% else %}{{ site.facebookUrl }}{% endif %}" target="_blank" rel="noopener">
+          <i class="{{ box.icon }}"></i>
+          <h3>{{ box.title }} →</h3>
+          <p>{{ box.text }}</p>
+        </a>
+        {%- endfor %}
+      </div>
+    </div>
+  </section>
+
+  <!-- ======= 8 常見問題 ======= -->
+  <section class="slide" id="faq">
+    <div class="inner narrow">
+      <p class="tag fade">FAQ</p>
+      <h2 class="fade">{{ t.faq.heading }}</h2>
+      <div class="fade">
+        {%- for item in t.faq["items"] %}
+        <details{% if loop.first %} open{% endif %}><summary>{{ item.question }}</summary><p>{{ item.answerHtml | safe }}</p></details>
+        {%- endfor %}
+      </div>
+    </div>
+  </section>
+
+  <!-- ======= 9 合作夥伴 + 頁尾 ======= -->
+  <section class="slide tint-end" id="partners">
+    <div class="inner">
+      <p class="tag fade">PARTNERS</p>
+      <h2 class="fade">{{ t.partners.heading }}</h2>
+      <div class="partners fade">
+        {%- for partner in site.partners %}
+        <a class="partner" href="{{ partner.href }}" target="_blank" rel="noopener">
+          <span class="logo"><img src="{{ partner.img }}" alt="" loading="lazy" decoding="async"></span>
+          <span class="cap">{{ t.partners["items"][partner.key] }}</span>
+        </a>
+        {%- endfor %}
+      </div>
+
+      <footer class="foot fade">
+        <div class="social">
+          <a href="{{ site.discordUrl }}" target="_blank" rel="noopener" aria-label="Discord"><i class="bx bxl-discord"></i></a>
+          <a href="{{ site.facebookUrl }}" target="_blank" rel="noopener" aria-label="Facebook"><i class="bx bxl-facebook"></i></a>
+        </div>
+        <div class="links">
+          {%- for link in site.footerLinks %}
+          {%- if link.label != 'Home' %}<a href="{{ link.href }}" target="_blank" rel="noopener">{{ link.label }}</a>{% endif %}
+          {%- endfor %}
+          <button class="linkish" type="button" id="open-privacy">{{ t.privacy.heading }}</button>
+          <span>{{ t.footer.email }} <span class="mail"><img src="assets/img/email.png" alt="email"></span></span>
+        </div>
+        <p>&copy; Copyright <strong>{{ t.footer.copyright }}</strong>. All Rights Reserved</p>
+        <p>{{ t.footer.disclaimerTitle }} {{ t.footer.disclaimer }}</p>
+      </footer>
+    </div>
+  </section>
+
+  </main>
+
+  <!-- 隱私權政策（點頁尾連結開啟） -->
+  <dialog id="privacy">
+    <h3>{{ t.privacy.heading }}</h3>
+    <h4>{{ t.privacy.subheading }}</h4>
+    <p>{{ t.privacy.intro }}</p>
+    <ul>
+      {%- for item in t.privacy["items"] %}
+      <li>{{ item }}</li>
+      {%- endfor %}
+    </ul>
+    {%- for paragraph in t.privacy.paragraphs %}
+    <p>{{ paragraph }}</p>
+    {%- endfor %}
+    <p>{{ t.privacy.contactBefore }}<span class="mail"><img src="assets/img/email.png" alt="email"></span>{{ t.privacy.contactAfter }}</p>
+    <button type="button" id="close-privacy">{{ t.privacy.close }}</button>
+  </dialog>

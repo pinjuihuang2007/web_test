@@ -1,0 +1,395 @@
+<!doctype html>
+<html lang="zh-Hant">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="robots" content="noindex,nofollow">
+<title>網站管理 | 中華虛擬航空</title>
+<link rel="icon" href="assets/img/favicon.png">
+<style>
+  :root { --bg:#f6f2fc; --card:#fff; --text:#231a2e; --muted:#6d6479; --line:#e6dded; --brand:#7b5cc4; --plum:#c73a72; --ok:#1a7f4b; }
+  @media (prefers-color-scheme: dark) {
+    :root { --bg:#1a0a2c; --card:#241238; --text:#efe9f6; --muted:#a99bbd; --line:#38244f; --brand:#b48be0; --plum:#f06b97; --ok:#5ed39a; }
+  }
+  * { box-sizing: border-box; }
+  body { margin:0; background:var(--bg); color:var(--text); line-height:1.6;
+    font-family:-apple-system,BlinkMacSystemFont,"Noto Sans TC","PingFang TC","Microsoft JhengHei",sans-serif; }
+  main { max-width:760px; margin:0 auto; padding:24px 16px 80px; }
+  .bar { display:flex; align-items:center; gap:12px; margin-bottom:18px; flex-wrap:wrap; }
+  .bar h1 { font-size:22px; margin:0; flex:1; }
+  .bar small { color:var(--muted); }
+  .card { background:var(--card); border:1px solid var(--line); border-radius:14px; padding:20px; margin-bottom:16px; }
+  .card h2 { font-size:17px; margin:0 0 14px; }
+  .field { margin-bottom:18px; }
+  .field:last-child { margin-bottom:0; }
+  label { display:block; font-weight:600; margin-bottom:6px; font-size:15px; }
+  input[type=text], input[type=email], input[type=password], input[type=date], textarea {
+    width:100%; font:inherit; color:inherit; background:transparent;
+    border:1px solid var(--line); border-radius:10px; padding:10px 12px; }
+  textarea { min-height:100px; resize:vertical; }
+  input:focus, textarea:focus, button:focus-visible { outline:2px solid var(--brand); outline-offset:1px; }
+  .hint { color:var(--muted); font-size:13px; margin-top:4px; }
+  button, .link { font:inherit; cursor:pointer; border-radius:999px; padding:8px 18px; border:1px solid var(--line);
+    background:transparent; color:var(--text); text-decoration:none; display:inline-block; }
+  button.primary { background:var(--brand); color:#fff; border-color:var(--brand); font-weight:600; }
+  @media (prefers-color-scheme: dark) { button.primary { color:#1a0a2c; } }
+  button.danger { color:var(--plum); border-color:var(--plum); }
+  button.small { padding:4px 12px; font-size:13px; }
+  button:disabled { opacity:.5; cursor:not-allowed; }
+  .actions { display:flex; gap:10px; flex-wrap:wrap; margin-top:18px; }
+  .tabs { display:flex; gap:8px; margin-bottom:16px; }
+  .tabs button[aria-selected=true] { background:var(--brand); color:#fff; border-color:var(--brand); }
+  @media (prefers-color-scheme: dark) { .tabs button[aria-selected=true] { color:#1a0a2c; } }
+  #msg { min-height:24px; margin:0 0 12px; font-size:14px; }
+  #msg.bad { color:var(--plum); } #msg.ok { color:var(--ok); }
+  .preview { display:block; max-width:260px; max-height:160px; margin:10px 0; border-radius:8px; border:1px solid var(--line); }
+  .row { display:flex; gap:10px; align-items:center; flex-wrap:wrap; }
+  .item { display:flex; gap:12px; align-items:center; justify-content:space-between; flex-wrap:wrap;
+    padding:12px 0; border-bottom:1px solid var(--line); }
+  .item:last-child { border-bottom:0; }
+  .item .t { flex:1; min-width:180px; }
+  .item .t b { display:block; }
+  .item .t span { color:var(--muted); font-size:13px; }
+  .badge { font-size:12px; padding:1px 8px; border-radius:999px; border:1px solid var(--line); color:var(--muted); }
+  .badge.on { color:var(--ok); border-color:var(--ok); }
+  .check { display:flex; align-items:center; gap:8px; font-weight:600; }
+  .check input { width:auto; }
+  [hidden] { display:none !important; }
+</style>
+</head>
+<body>
+<main>
+  <div class="bar">
+    <h1>網站管理</h1>
+    <small id="who"></small>
+    <button id="logout" type="button" hidden>登出</button>
+  </div>
+  <p id="msg" role="status"></p>
+
+  <form id="login" class="card">
+    <div class="field"><label for="email">Email</label><input id="email" type="email" autocomplete="username" required></div>
+    <div class="field"><label for="pw">密碼</label><input id="pw" type="password" autocomplete="current-password" required></div>
+    <button class="primary" type="submit">登入</button>
+  </form>
+
+  <section id="editor" hidden>
+    <div class="tabs" role="tablist">
+      <button type="button" role="tab" id="tab-ann" aria-selected="true">活動公告</button>
+      <button type="button" role="tab" id="tab-site" aria-selected="false">首頁文字與圖片</button>
+      <a class="link" href="index.html" target="_blank" rel="noopener" style="margin-left:auto">開啟網站預覽</a>
+    </div>
+
+    <!-- 活動公告 -->
+    <div id="panel-ann">
+      <div class="card">
+        <h2 id="a_formtitle">新增公告</h2>
+        <input type="hidden" id="a_id">
+        <div class="field"><label for="a_title">標題（必填）</label><input id="a_title" type="text" maxlength="120"></div>
+        <div class="field"><label for="a_date">活動日期</label><input id="a_date" type="date">
+          <div class="hint">首頁依日期由新到舊排序，最多顯示最新 3 則。</div></div>
+        <div class="field"><label for="a_body">內容</label><textarea id="a_body" maxlength="1000"></textarea>
+          <div class="hint">可換行，首頁最多顯示 5 行。</div></div>
+        <div class="field"><label for="a_image">圖片（選填）</label>
+          <input id="a_image" type="text" placeholder="https://… （上傳後會自動填入）">
+          <img id="a_preview" class="preview" alt="" hidden>
+          <input id="a_file" type="file" accept="image/png,image/jpeg,image/webp,image/gif">
+          <div class="hint">支援 PNG、JPG、WebP、GIF，5MB 以內；建議橫式 16:9。</div></div>
+        <div class="field"><label class="check"><input id="a_pub" type="checkbox" checked> 發佈到網站（取消勾選＝存成草稿）</label></div>
+        <div class="actions">
+          <button id="a_save" class="primary" type="button">儲存公告</button>
+          <button id="a_cancel" type="button" hidden>取消編輯</button>
+        </div>
+      </div>
+      <div class="card">
+        <h2>所有公告</h2>
+        <div id="a_list"></div>
+      </div>
+    </div>
+
+    <!-- 首頁文字與圖片 -->
+    <div id="panel-site" hidden>
+      <div class="card"><div id="fields"></div></div>
+      <div class="actions">
+        <button id="save" class="primary" type="button">儲存全部變更</button>
+      </div>
+      <p class="hint">留空的欄位會顯示網站原本的預設內容（公告標籤留空則不顯示）。這些文字只會套用在中文版首頁。</p>
+    </div>
+  </section>
+</main>
+
+<script src="assets/js/site-config.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.57.4/dist/umd/supabase.js"></script>
+<script>
+(function () {
+  // 「首頁文字與圖片」可編輯的欄位。要新增欄位：在這裡加一行，並在 pages/index.njk 對應元素加上 data-key（文字）或 data-img-key（圖片）。
+  var FIELDS = [
+    { key: "notice",         label: "首頁公告標籤",       type: "text",  hint: "顯示在首頁標題下方的小標籤，例如「本週六連飛活動」。留空則不顯示。" },
+    { key: "hero_title",     label: "首頁大標題",         type: "text" },
+    { key: "hero_subtitle",  label: "首頁副標題",         type: "text" },
+    { key: "whyus_heading",  label: "「關於我們」標題",   type: "text" },
+    { key: "whyus_welcome",  label: "「關於我們」結尾語", type: "text" },
+    { key: "dispatch_image", label: "簽派系統圖片",       type: "image", hint: "支援 PNG、JPG、WebP、GIF，5MB 以內。" }
+  ];
+  var EXTS = { "image/png": "png", "image/jpeg": "jpg", "image/webp": "webp", "image/gif": "gif" };
+
+  var cfg = window.SITE_CONFIG;
+  var $ = function (id) { return document.getElementById(id); };
+  var current = {};
+  var db = null;
+
+  function say(text, bad) {
+    var m = $("msg");
+    m.textContent = text || "";
+    m.className = text ? (bad ? "bad" : "ok") : "";
+  }
+  function show(loggedIn) {
+    $("login").hidden = loggedIn;
+    $("editor").hidden = !loggedIn;
+    $("logout").hidden = !loggedIn;
+    if (!loggedIn) $("who").textContent = "";
+  }
+  function el(tag, cls, text) {
+    var e = document.createElement(tag);
+    if (cls) e.className = cls;
+    if (text !== undefined) e.textContent = text;
+    return e;
+  }
+
+  if (!cfg || !cfg.url || !cfg.anonKey || cfg.url.indexOf("YOUR-") !== -1) {
+    $("login").hidden = true;
+    say("尚未設定：請先在 assets/js/site-config.js 填入 Supabase 的網址與公開金鑰。", true);
+    return;
+  }
+  if (!window.supabase) {
+    $("login").hidden = true;
+    say("無法載入登入元件，請檢查網路後重新整理。", true);
+    return;
+  }
+  db = window.supabase.createClient(cfg.url, cfg.anonKey);
+
+  async function uploadImage(prefix, file, input, preview, fileInput) {
+    var ext = EXTS[file.type];
+    if (!ext) { say("只能上傳 PNG、JPG、WebP 或 GIF 圖片。", true); fileInput.value = ""; return; }
+    if (file.size > 5 * 1024 * 1024) { say("圖片超過 5MB，請先壓縮再上傳。", true); fileInput.value = ""; return; }
+    say("上傳中…");
+    var name = prefix + "-" + Date.now() + "." + ext;
+    var up = await db.storage.from("images").upload(name, file, { contentType: file.type, cacheControl: "3600" });
+    if (up.error) { say("上傳失敗：" + up.error.message, true); return; }
+    var url = db.storage.from("images").getPublicUrl(name).data.publicUrl;
+    input.value = url;
+    preview.src = url;
+    preview.hidden = false;
+    say("圖片已上傳，記得按「儲存」才會套用到網站。");
+  }
+
+  async function enter(session) {
+    var res = await db.from("admins").select("user_id").eq("user_id", session.user.id).maybeSingle();
+    if (res.error || !res.data) {
+      await db.auth.signOut();
+      show(false);
+      say("這個帳號沒有管理權限，請聯絡網站管理員把你加入管理員名單。", true);
+      return;
+    }
+    $("who").textContent = session.user.email;
+    var c = await db.from("site_content").select("key,value");
+    if (c.error) { say("讀取失敗：" + c.error.message, true); return; }
+    current = {};
+    c.data.forEach(function (r) { current[r.key] = r.value; });
+    renderFields();
+    await loadAnnouncements();
+    show(true);
+    say("");
+  }
+
+  /* ------------------------- 分頁切換 ------------------------- */
+  function selectTab(which) {
+    $("tab-ann").setAttribute("aria-selected", which === "ann" ? "true" : "false");
+    $("tab-site").setAttribute("aria-selected", which === "site" ? "true" : "false");
+    $("panel-ann").hidden = which !== "ann";
+    $("panel-site").hidden = which !== "site";
+  }
+  $("tab-ann").addEventListener("click", function () { selectTab("ann"); });
+  $("tab-site").addEventListener("click", function () { selectTab("site"); });
+
+  /* ------------------------- 活動公告 ------------------------- */
+  var announcements = [];
+
+  function clearForm() {
+    $("a_id").value = ""; $("a_title").value = ""; $("a_date").value = "";
+    $("a_body").value = ""; $("a_image").value = ""; $("a_file").value = "";
+    $("a_preview").hidden = true; $("a_pub").checked = true;
+    $("a_formtitle").textContent = "新增公告";
+    $("a_cancel").hidden = true;
+  }
+
+  function editAnnouncement(a) {
+    $("a_id").value = a.id;
+    $("a_title").value = a.title || "";
+    $("a_date").value = a.event_date || "";
+    $("a_body").value = a.body || "";
+    $("a_image").value = a.image_url || "";
+    $("a_file").value = "";
+    var ok = /^https:\/\//.test(a.image_url || "");
+    $("a_preview").hidden = !ok;
+    if (ok) $("a_preview").src = a.image_url;
+    $("a_pub").checked = !!a.published;
+    $("a_formtitle").textContent = "編輯公告";
+    $("a_cancel").hidden = false;
+    window.scrollTo({ top: 0, behavior: "smooth" });
+  }
+
+  async function loadAnnouncements() {
+    var r = await db.from("announcements").select("*")
+      .order("event_date", { ascending: false, nullsFirst: false })
+      .order("created_at", { ascending: false });
+    if (r.error) { say("讀取公告失敗：" + r.error.message, true); return; }
+    announcements = r.data;
+    var box = $("a_list");
+    box.textContent = "";
+    if (!announcements.length) { box.appendChild(el("p", "hint", "還沒有任何公告。")); return; }
+    announcements.forEach(function (a) {
+      var row = el("div", "item");
+      var t = el("div", "t");
+      t.appendChild(el("b", "", a.title));
+      t.appendChild(el("span", "", (a.event_date ? a.event_date.replace(/-/g, "/") : "未設日期") + " "));
+      t.appendChild(el("span", "badge" + (a.published ? " on" : ""), a.published ? "已發佈" : "草稿"));
+      row.appendChild(t);
+
+      var acts = el("div", "row");
+      var bEdit = el("button", "small", "編輯"); bEdit.type = "button";
+      bEdit.addEventListener("click", function () { editAnnouncement(a); });
+      var bPub = el("button", "small", a.published ? "改為草稿" : "發佈"); bPub.type = "button";
+      bPub.addEventListener("click", async function () {
+        var u = await db.from("announcements").update({ published: !a.published }).eq("id", a.id);
+        if (u.error) { say("更新失敗：" + u.error.message, true); return; }
+        say(a.published ? "已改為草稿，網站上不會再顯示。" : "已發佈。");
+        loadAnnouncements();
+      });
+      var bDel = el("button", "small danger", "刪除"); bDel.type = "button";
+      bDel.addEventListener("click", async function () {
+        if (!window.confirm("確定要刪除「" + a.title + "」嗎？刪除後無法復原。")) return;
+        var d = await db.from("announcements").delete().eq("id", a.id);
+        if (d.error) { say("刪除失敗：" + d.error.message, true); return; }
+        if ($("a_id").value === a.id) clearForm();
+        say("已刪除。");
+        loadAnnouncements();
+      });
+      acts.appendChild(bEdit); acts.appendChild(bPub); acts.appendChild(bDel);
+      row.appendChild(acts);
+      box.appendChild(row);
+    });
+  }
+
+  $("a_file").addEventListener("change", function () {
+    var f = $("a_file").files[0];
+    if (f) uploadImage("announcement", f, $("a_image"), $("a_preview"), $("a_file"));
+  });
+  $("a_cancel").addEventListener("click", function () { clearForm(); say(""); });
+
+  $("a_save").addEventListener("click", async function () {
+    var title = $("a_title").value.trim();
+    var img = $("a_image").value.trim();
+    if (!title) { say("請填寫公告標題。", true); $("a_title").focus(); return; }
+    if (img && !/^https:\/\//.test(img)) { say("圖片網址必須以 https:// 開頭。", true); return; }
+    var row = {
+      title: title,
+      body: $("a_body").value.trim(),
+      event_date: $("a_date").value || null,
+      image_url: img || null,
+      published: $("a_pub").checked
+    };
+    var id = $("a_id").value;
+    var btn = $("a_save");
+    btn.disabled = true;
+    say("儲存中…");
+    var r = id ? await db.from("announcements").update(row).eq("id", id)
+               : await db.from("announcements").insert(row);
+    btn.disabled = false;
+    if (r.error) { say("儲存失敗：" + r.error.message, true); return; }
+    say(id ? "公告已更新。" : "公告已新增。");
+    clearForm();
+    loadAnnouncements();
+  });
+
+  /* ------------------------- 首頁文字與圖片 ------------------------- */
+  function renderFields() {
+    var box = $("fields");
+    box.textContent = "";
+    FIELDS.forEach(function (f) {
+      var wrap = el("div", "field");
+      var lab = el("label", "", f.label);
+      lab.htmlFor = "f_" + f.key;
+      wrap.appendChild(lab);
+
+      var inp = document.createElement("input");
+      inp.type = "text";
+      inp.id = "f_" + f.key;
+      inp.value = current[f.key] || "";
+      inp.setAttribute("data-key", f.key);
+      inp.setAttribute("data-type", f.type);
+      if (f.type === "image") inp.placeholder = "https://… （上傳後會自動填入）";
+      wrap.appendChild(inp);
+
+      if (f.type === "image") {
+        var prev = el("img", "preview");
+        prev.alt = "";
+        prev.hidden = !/^https:\/\//.test(inp.value);
+        if (!prev.hidden) prev.src = inp.value;
+        wrap.appendChild(prev);
+        var file = document.createElement("input");
+        file.type = "file";
+        file.accept = "image/png,image/jpeg,image/webp,image/gif";
+        file.addEventListener("change", function () {
+          if (file.files[0]) uploadImage(f.key, file.files[0], inp, prev, file);
+        });
+        wrap.appendChild(file);
+      }
+      if (f.hint) wrap.appendChild(el("div", "hint", f.hint));
+      box.appendChild(wrap);
+    });
+  }
+
+  $("save").addEventListener("click", async function () {
+    var rows = [];
+    var bad = null;
+    [].forEach.call(document.querySelectorAll("#fields [data-key]"), function (e) {
+      var k = e.getAttribute("data-key");
+      var v = e.value.trim();
+      if (e.getAttribute("data-type") === "image" && v !== "" && !/^https:\/\//.test(v)) bad = e;
+      if (v !== (current[k] || "")) rows.push({ key: k, value: v, updated_at: new Date().toISOString() });
+    });
+    if (bad) { say("圖片網址必須以 https:// 開頭。", true); bad.focus(); return; }
+    if (!rows.length) { say("沒有變更。"); return; }
+    var btn = $("save");
+    btn.disabled = true;
+    say("儲存中…");
+    var r = await db.from("site_content").upsert(rows, { onConflict: "key" });
+    btn.disabled = false;
+    if (r.error) { say("儲存失敗：" + r.error.message, true); return; }
+    rows.forEach(function (x) { current[x.key] = x.value; });
+    say("已儲存 " + rows.length + " 個欄位。重新整理網站即可看到變更。");
+  });
+
+  /* ------------------------- 登入 / 登出 ------------------------- */
+  $("login").addEventListener("submit", async function (e) {
+    e.preventDefault();
+    say("登入中…");
+    var r = await db.auth.signInWithPassword({ email: $("email").value.trim(), password: $("pw").value });
+    if (r.error) { say("登入失敗：Email 或密碼不正確。", true); return; }
+    $("pw").value = "";
+    await enter(r.data.session);
+  });
+  $("logout").addEventListener("click", async function () {
+    await db.auth.signOut();
+    show(false);
+    say("已登出。");
+  });
+
+  // 重新整理後，如果還有登入狀態就直接進入
+  db.auth.getSession().then(function (r) {
+    if (r.data && r.data.session) enter(r.data.session);
+  });
+})();
+</script>
+</body>
+</html>

@@ -1,0 +1,12 @@
+{
+  "name": "web_test",
+  "version": "1.0.0",
+  "description": "China Airlines Virtual Eleventy Site",
+  "scripts": {
+    "build": "npx @11ty/eleventy",
+    "start": "npx @11ty/eleventy --serve"
+  },
+  "dependencies": {
+    "@11ty/eleventy": "^3.0.0"
+  }
+}

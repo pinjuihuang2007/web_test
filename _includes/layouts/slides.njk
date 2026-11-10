@@ -1,0 +1,40 @@
+{% set headTitle = pageTitle or t.meta.title %}
+{% set headDescription = pageDescription or t.meta.description %}<!DOCTYPE html>
+<html lang="{{ localeMeta.lang }}">
+
+<head>
+  <meta charset="utf-8">
+  <meta content="width=device-width, initial-scale=1.0" name="viewport">
+
+  <title>{{ headTitle }}</title>
+  <meta name="description" content="{{ headDescription }}">
+  <meta name="keywords" content="{{ t.meta.keywords }}">
+  <meta name="theme-color" content="#7b5cc4">
+  <meta property="og:title" content="{{ headTitle }}">
+  <meta property="og:description" content="{{ headDescription }}">
+  <meta property="og:url" content="{{ site.url }}{{ pageHref or '/' }}">
+  <meta property="og:site_name" content="{{ t.meta.siteName }}">
+  <meta property="og:image" content="{{ site.ogImage }}">
+  <meta property="og:type" content="website">
+
+  <link href="assets/img/favicon.png" rel="icon">
+  <link href="assets/img/favicon.png" rel="apple-touch-icon">
+  <link rel="preload" as="image" href="assets/img/hero-bg.jpg">
+
+  <!-- 只用到 Discord / Facebook 等圖示，沿用站內既有的 boxicons -->
+  <link href="assets/vendor/boxicons/css/boxicons.min.css" rel="stylesheet">
+  <link href="assets/css/slides.css" rel="stylesheet">
+</head>
+
+<body>
+
+{{ content | safe }}
+
+  <script defer src="assets/js/site-config.js"></script>
+  <script defer src="assets/js/slides.js"></script>
+  <script defer src="assets/js/content.js"></script>
+  <script defer src="assets/js/member.js"></script>
+
+</body>
+
+</html>

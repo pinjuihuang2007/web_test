@@ -1,0 +1,129 @@
+<h1>中華虛擬航空 官方網站</h1>
+<p>本站使用 <a href="https://www.11ty.dev/">Eleventy</a> 產生靜態頁面，
+由 GitHub Actions 建置 <code>_site/</code> 後部署到 GitHub Pages。</p>
+<blockquote>
+<p>⚠️ Repo 根目錄<strong>不再</strong>放 <code>index.html</code>、<code>flight-history-*.html</code>、<code>sitemap.xml</code>，
+這些檔案都是建置產生的。要改內容請改 <code>_data/</code> 與 <code>pages/</code>。</p>
+</blockquote>
+<h2>目錄結構</h2>
+<table>
+<thead>
+<tr>
+<th>路徑</th>
+<th>用途</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>_data/site.json</code></td>
+<td>站台設定：網址、社群連結、合作夥伴、統計頁籤</td>
+</tr>
+<tr>
+<td><code>_data/flights.json</code></td>
+<td><strong>聯飛紀錄清單（唯一來源）</strong></td>
+</tr>
+<tr>
+<td><code>_data/i18n.json</code></td>
+<td>中／英文介面字串</td>
+</tr>
+<tr>
+<td><code>_includes/</code></td>
+<td>共用版型與 header / footer / 隱私權區塊</td>
+</tr>
+<tr>
+<td><code>pages/index.njk</code></td>
+<td>首頁模板，會產生 <code>index.html</code> 與 <code>index-en.html</code></td>
+</tr>
+<tr>
+<td><code>pages/flight-history.njk</code></td>
+<td>聯飛紀錄模板，每筆 flight 產生一頁</td>
+</tr>
+<tr>
+<td><code>pages/sitemap.njk</code></td>
+<td>產生 <code>sitemap.xml</code></td>
+</tr>
+<tr>
+<td><code>assets/</code></td>
+<td>圖片、CSS、JS、資料檔（原樣複製到網站）</td>
+</tr>
+</tbody>
+</table>
+<h2>如何新增一場聯飛紀錄</h2>
+<ol>
+<li>
+<p>把該場聯飛的時間軸放到 <code>assets/timeline/timeline-YYYYMMDD.json</code></p>
+</li>
+<li>
+<p>在 <code>_data/flights.json</code> 加一筆：</p>
+<pre><code class="language-json">{
+  &quot;id&quot;: &quot;20260822&quot;,
+  &quot;date&quot;: &quot;2026-08-22&quot;,
+  &quot;listed&quot;: true,
+  &quot;title&quot;: { &quot;zh-TW&quot;: &quot;活動名稱&quot;, &quot;en&quot;: &quot;Event name&quot; },
+  &quot;image&quot;: null,
+  &quot;lines&quot;: {
+    &quot;zh-TW&quot;: [&quot;活動說明第一行&quot;, &quot;活動說明第二行&quot;],
+    &quot;en&quot;: [&quot;Line one&quot;, &quot;Line two&quot;]
+  },
+  &quot;timeline&quot;: &quot;assets/timeline/timeline-20260822.json&quot;,
+  &quot;map&quot;: { &quot;lat&quot;: 24.0, &quot;lon&quot;: 116.7, &quot;zoom&quot;: 6 }
+}
+</code></pre>
+<ul>
+<li>若說明是一張圖，把 <code>image</code> 設成圖片路徑（例如 <code>assets/img/flight-history/20260822.png</code>），<code>lines</code> 留空陣列。</li>
+<li><code>listed</code> 設為 <code>false</code> 時該頁仍會產生，但不會出現在其他頁的「其他聯飛紀錄」按鈕清單。</li>
+</ul>
+</li>
+<li>
+<p>Commit 並 push。</p>
+</li>
+</ol>
+<p>導覽列連結、首頁的聯飛地圖、每一頁的「其他聯飛紀錄」按鈕清單、<code>sitemap.xml</code>
+都會依照 <code>date</code> 最新的一筆自動更新，不需要手動改任何 HTML。</p>
+<h2>如何更新成員名單</h2>
+<ol>
+<li>下載最新<a href="https://raw.githubusercontent.com/China-Airlines-Virtual/China-Airlines-Virtual.github.io/main/assets/members.csv">成員名單</a></li>
+<li>用 Excel 打開並按照格式編輯（切勿任意新增直行）</li>
+</ol>
+<p><strong>注意：最第一欄的id，請依序增加並不可重複，若成員離開讓他空號即可</strong>
+3. 打開<a href="https://github.com/China-Airlines-Virtual/China-Airlines-Virtual.github.io/tree/main/assets">網頁</a>，點擊 <code>Add file</code> -&gt; <code>Upload files</code>
+<img src=".github/add-file.png" alt="image">
+4. 將剛剛編輯的 <code>members.csv</code> 拖到方塊中，在 Commit changes 欄位填寫 <code>chore: update members data</code>，然後點擊 <code>Commit changes</code>
+<img src=".github/commit-file.png" alt="image"></p>
+<h2>本機開發</h2>
+<pre><code class="language-bash">npm install
+npm start     # http://localhost:8080，存檔自動重新整理
+npm run build # 產生 _site/
+</code></pre>
+<h2>部署</h2>
+<p><code>.github/workflows/deploy.yml</code> 會在 push 到 <code>main</code> 時建置並部署。</p>
+<ul>
+<li><strong>Repo 設定需求</strong>：Settings → Pages → Source 必須設為 <strong>GitHub Actions</strong>。</li>
+<li><code>assets/statistics.json</code> 由另一個 repo 的 Action 以 PAT commit，
+PAT 推送的 commit 會觸發本 repo 的 workflow，所以統計更新後會自動重新部署。</li>
+<li>另外設有每日排程與 <code>workflow_dispatch</code>，可在 PAT 失效時作為備援或手動重跑。</li>
+</ul>
+<h2>首頁（一頁一頁滑動版）與後台管理</h2>
+<ul>
+<li>首頁模板是 <code>pages/index.njk</code>，版型 <code>_includes/layouts/slides.njk</code>，樣式 <code>assets/css/slides.css</code>，互動 <code>assets/js/slides.js</code>。
+統計數字與前 5 名仍然讀 <code>assets/statistics.json</code> 與 <code>assets/members.csv</code>。</li>
+<li><strong>背景影片</strong>：把影片放到 <code>assets/video/hero.mp4</code>（規格見該資料夾的 README.txt）。檔案不存在時會退回 <code>_data/site.json</code> 的 YouTube 影片。</li>
+<li><strong>後台</strong>：<code>/admin.html</code>，管理員登入後可管理「活動公告」與首頁部分文字、圖片。資料存在 Supabase：
+<ol>
+<li>在 Supabase SQL Editor 執行 <code>supabase/setup.sql</code>（可重複執行）。</li>
+<li>在 Authentication → Users 建立管理員帳號，再用 setup.sql 最後一段把他加進 <code>admins</code>。</li>
+<li>把 Project URL 與<strong>公開</strong> anon/publishable 金鑰填進 <code>assets/js/site-config.js</code>（不要填 service_role / secret 金鑰）。</li>
+</ol>
+</li>
+<li>新增可由後台編輯的文字：在 <code>pages/index.njk</code> 的元素加上 <code>data-key=&quot;欄位代號&quot;</code>（圖片用 <code>data-img-key</code>），並把欄位加進 <code>admin.html</code> 裡的 <code>FIELDS</code>。後台文字只套用在中文版首頁。</li>
+</ul>
+<h2>會員數位識別證（vAMSYS 登入）</h2>
+<ul>
+<li>程式：<code>assets/js/member.js</code>，設定在 <code>assets/js/site-config.js</code> 的 <code>vamsys</code>。流程是 OAuth 授權碼 + PKCE（公開客戶端，<strong>不使用 client secret</strong>）。</li>
+<li>vAMSYS 後台登記的「重新導向網址」必須與 <code>redirectUri</code> 一字不差（留空時為網站根網址，例如 <code>https://china-airlines-virtual.github.io/</code>，包含最後的斜線）。</li>
+<li>權杖與資料只存在使用者瀏覽器的 sessionStorage，不會寫入 Supabase 或任何資料庫。</li>
+<li>如果瀏覽器因跨網域限制無法直接呼叫 vAMSYS，需要改由 Supabase Edge Function 代為換權杖與取資料。</li>
+</ul>
+<h3>備用：Supabase Edge Function（<code>supabase/functions/vamsys-proxy</code>）</h3>
+<p>只有在瀏覽器擋住直接呼叫 vAMSYS 時才需要。部署後把函式網址填進 <code>site-config.js</code> 的 <code>vamsys.proxyUrl</code>，
+並在 Edge Functions → Secrets 設定 <code>VAMSYS_CLIENT_ID</code> 與 <code>ALLOWED_ORIGINS</code>；函式需關閉 &quot;Verify JWT&quot;。</p>
