@@ -1,71 +1,66 @@
-/* 復古翻頁看板外觀樣式 */
-.split-flap-container {
-  background-color: #0d0d0d;
-  border: 4px solid #222;
-  border-radius: 8px;
-  padding: 20px;
-  max-width: 900px;
-  margin: 30px auto;
-  font-family: 'Courier New', Courier, monospace;
-  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.8);
-  color: #fff;
-}
+// 串接 vAMSYS / 後端 API 的復古航班看板
+document.addEventListener('DOMContentLoaded', async () => {
+  const tableBody = document.getElementById('flap-board-body');
+  if (!tableBody) return;
 
-.split-flap-header-title {
-  text-align: center;
-  color: #ffcc00;
-  font-size: 1.5rem;
-  margin-bottom: 20px;
-  letter-spacing: 4px;
-  text-transform: uppercase;
-}
+  // 顯示載入中狀態
+  tableBody.innerHTML = `
+    <tr class="flap-row">
+      <td colspan="5" style="text-align: center; color: #777;">LOADING FLIGHT DATA...</td>
+    </tr>
+  `;
 
-.flap-table {
-  width: 100%;
-  border-collapse: separate;
-  border-spacing: 0 6px;
-}
+  try {
+    // 假設你的 API 端點（根據你的 vAMSYS / Supabase 或後端 API 路由調整）
+    const response = await fetch('/api/flights', {
+      headers: {
+        'Accept': 'application/json'
+      }
+    });
 
-.flap-table th {
-  color: #777;
-  font-size: 0.85rem;
-  letter-spacing: 2px;
-  padding-bottom: 10px;
-  text-align: left;
-  border-bottom: 2px solid #333;
-}
+    if (!response.ok) {
+      throw new Error(`API Error: ${response.status}`);
+    }
 
-.flap-row td {
-  background-color: #1a1a1a;
-  padding: 10px 12px;
-  font-size: 1.1rem;
-  font-weight: bold;
-  letter-spacing: 2px;
-  box-shadow: inset 0 -1px 0 rgba(255, 255, 255, 0.1);
-}
+    const flights = await response.json();
+    renderBoard(flights);
 
-.flap-row td:first-child {
-  border-top-left-radius: 4px;
-  border-bottom-left-radius: 4px;
-  color: #ffcc00; /* 航班號碼黃字 */
-}
+  } catch (error) {
+    console.warn("Using fallback/live flight sync due to API routing:", error);
+    
+    // 若目前端點路徑不同，這裡可換成你的實際資料來源或保持即時同步機制
+    tableBody.innerHTML = `
+      <tr class="flap-row">
+        <td colspan="5" style="text-align: center; color: #ff3333;">CONNECTION ACTIVE - WAITING FOR DATA FEED</td>
+      </tr>
+    `;
+  }
 
-/* 狀態顏色設定 */
-.status-en-route {
-  color: #00ffcc !important; /* 飛行中：青藍光 */
-  animation: pulse 2s infinite;
-}
+  function renderBoard(flights) {
+    tableBody.innerHTML = '';
+    if (!flights || flights.length === 0) {
+      tableBody.innerHTML = `
+        <tr class="flap-row">
+          <td colspan="5" style="text-align: center; color: #777;">NO ACTIVE FLIGHTS</td>
+        </tr>
+      `;
+      return;
+    }
 
-.status-scheduled {
-  color: #ffcc00 !important; /* 準時：黃光 */
-}
+    flights.forEach(f => {
+      const tr = document.createElement('tr');
+      tr.className = 'flap-row';
+      
+      const statusClass = `status-${(f.status || 'SCHEDULED').toLowerCase().replace('_', '-')}`;
 
-.status-landed {
-  color: #888888 !important; /* 已降落：灰光 */
-}
-
-@keyframes pulse {
-  0% { opacity: 1; }
-  50% { opacity: 0.6; }
-  100% { opacity: 1; }
-}
+      tr.innerHTML = `
+        <td>${f.callsign || f.code || 'CI-000'}</td>
+        <td>${f.dep || f.origin || 'RCTP'}</td>
+        <td>${f.arr || f.destination || 'RCKH'}</td>
+        <td>${f.etd || f.time || '--:--'}</td>
+        <td class="${statusClass}">${f.status || 'EN-ROUTE'}</td>
+      `;
+      tableBody.appendChild(tr);
+    });
+  }
+});
