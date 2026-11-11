@@ -2,8 +2,7 @@ module.exports = function(eleventyConfig) {
   // 複製靜態資源與資料夾
   eleventyConfig.addPassthroughCopy("assets");
   eleventyConfig.addPassthroughCopy("_data");
-  eleventyConfig.addPassthroughCopy("admin.html");
-
+   eleventyConfig.addPassthroughCopy("admin");
   return {
     dir: {
       input: ".",
