@@ -15,7 +15,6 @@
       "flightHistory": "聯飛紀錄",
       "privacy": "隱私權政策",
       "languageSwitch": "English",
-      "theme": "切換深色／淺色模式",
       "crewLogin": "組員登入"
     },
     "hero": {
@@ -198,7 +197,6 @@
       "flightHistory": "Flying Events",
       "privacy": "Privacy Policy",
       "languageSwitch": "中文",
-      "theme": "Toggle dark / light mode",
       "crewLogin": "Crew System"
     },
     "hero": {

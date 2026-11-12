@@ -439,8 +439,6 @@ a.notice { color: #fff; }
 }
 
 /* ---------- 深淺色切換按鈕 ---------- */
-.theme-btn { width: 34px; height: 34px; border-radius: 50%; display: inline-flex; align-items: center; justify-content: center; cursor: pointer; font-size: 18px; color: var(--violet-d); background: rgba(255, 255, 255, .6); border: 1px solid var(--violet-l); padding: 0; }
-.theme-btn:hover { background: var(--grad); color: #fff; border-color: transparent; }
 .brand .logo-d { display: none; }
 
 /* ============ 深色模式 ============ */
@@ -462,8 +460,7 @@ html[data-theme="dark"] .slide:not(.hero)::after  { background: radial-gradient(
 html[data-theme="dark"] .top { background: rgba(28, 22, 46, .74); border-color: rgba(255, 255, 255, .12); box-shadow: 0 8px 30px rgba(0, 0, 0, .4); }
 html[data-theme="dark"] .brand .logo-l { display: none; } html[data-theme="dark"] .brand .logo-d { display: block; }
 html[data-theme="dark"] .top-links .pill { color: #eadfff; border-color: rgba(182, 155, 230, .6); background: rgba(255, 255, 255, .06); }
-html[data-theme="dark"] .theme-btn { color: #ffe08a; background: rgba(255, 255, 255, .08); border-color: rgba(182, 155, 230, .5); }
-html[data-theme="dark"] .dots a.on { background: var(--grad); border-color: transparent; }
+html[data-theme="dark"] html[data-theme="dark"] .dots a.on { background: var(--grad); border-color: transparent; }
 html[data-theme="dark"] .dots a { background: rgba(20, 16, 32, .7); box-shadow: 0 0 0 2px rgba(255, 255, 255, .12); }
 html[data-theme="dark"] .social-cards .card, html[data-theme="dark"] .ann, html[data-theme="dark"] .login-prompt, html[data-theme="dark"] .countdown { background: rgba(255, 255, 255, .06); border-color: rgba(255, 255, 255, .12); box-shadow: 0 10px 30px rgba(0, 0, 0, .3); }
 html[data-theme="dark"] .ann .ann-img { background: #2a2142; }
@@ -526,6 +523,5 @@ html[data-theme="dark"] .tile::after { background: rgba(12, 8, 26, .7); }
   .top { padding-right: 6px; }
   .top-links { gap: 8px; font-size: 12px; }
   .top-links .pill { padding: 5px 10px; }
-  .theme-btn { width: 30px; height: 30px; font-size: 16px; flex: none; }
-  .brand img { height: 26px; }
+    .brand img { height: 26px; }
 }

@@ -2,25 +2,20 @@
 (function () {
   'use strict';
 
-  // ---- 深色／淺色模式切換（偏好存在這個瀏覽器；沒設定過就跟著系統）----
+  // ---- 深色／淺色模式：完全跟著裝置（系統）設定，裝置切換時即時跟著變 ----
   (function () {
-    var btn = document.getElementById('theme-btn');
+    if (!window.matchMedia) return;
+    var mq = matchMedia('(prefers-color-scheme: dark)');
     var root = document.documentElement;
     var metaTheme = document.querySelector('meta[name="theme-color"]');
-    var paint = function () {
-      var dark = root.getAttribute('data-theme') === 'dark';
-      if (btn) { var i = btn.querySelector('i'); if (i) i.className = 'bx ' + (dark ? 'bx-sun' : 'bx-moon'); btn.setAttribute('aria-pressed', dark ? 'true' : 'false'); }
-      if (metaTheme) metaTheme.setAttribute('content', dark ? '#14101f' : '#7b5cc4');
+    var apply = function () {
+      root.setAttribute('data-theme', mq.matches ? 'dark' : 'light');
+      if (metaTheme) metaTheme.setAttribute('content', mq.matches ? '#14101f' : '#7b5cc4');
     };
-    paint();
-    if (btn) btn.addEventListener('click', function () {
-      var next = root.getAttribute('data-theme') === 'dark' ? 'light' : 'dark';
-      root.setAttribute('data-theme', next);
-      try { localStorage.setItem('calva_theme', next); } catch (e) {}
-      paint();
-    });
+    apply();
+    if (mq.addEventListener) mq.addEventListener('change', apply);
+    else if (mq.addListener) mq.addListener(apply);
   })();
-
 
   var slides = [].slice.call(document.querySelectorAll('.slide'));
   var dots = [].slice.call(document.querySelectorAll('.dots a'));

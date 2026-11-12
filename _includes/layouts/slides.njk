@@ -7,10 +7,9 @@
   <meta content="width=device-width, initial-scale=1.0, viewport-fit=cover" name="viewport">
 
   <script>
-    /* 在畫面出現前先套用深色／淺色，避免閃一下 */
+    /* 在畫面出現前先依裝置的深色／淺色設定套用，避免閃一下 */
     (function () { try {
-      var m = localStorage.getItem('calva_theme');
-      if (m !== 'dark' && m !== 'light') m = (window.matchMedia && matchMedia('(prefers-color-scheme: dark)').matches) ? 'dark' : 'light';
+      var m = (window.matchMedia && matchMedia('(prefers-color-scheme: dark)').matches) ? 'dark' : 'light';
       document.documentElement.setAttribute('data-theme', m);
     } catch (e) { document.documentElement.setAttribute('data-theme', 'light'); } })();
   </script>
@@ -56,7 +55,6 @@
   <script defer src="assets/js/content.js"></script>
   <script defer src="assets/js/airports.js"></script>
   <script defer src="assets/js/member.js"></script>
-  <script defer src="assets/js/theme.js"></script>
   <script defer src="assets/js/pwa.js"></script>
 
 </body>
