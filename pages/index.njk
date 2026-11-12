@@ -41,7 +41,7 @@ eleventyComputed:
   <!-- ======= 1 首頁（影片背景） ======= -->
   <section class="slide hero" id="hero">
     <div class="video" aria-hidden="true">
-      <video id="hero-video" autoplay muted loop playsinline preload="metadata"
+      <video id="hero-video" autoplay muted loop playsinline webkit-playsinline preload="auto"
              poster="assets/img/hero-bg.jpg" data-fallback="{{ site.heroVideoEmbedUrl }}">
         <source src="{{ site.heroVideoFile }}" type="video/mp4">
       </video>
