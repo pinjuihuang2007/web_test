@@ -1,19 +1,19 @@
 {
-   "url": "https://pinjuihuang2007.github.io/web_test",
+  "url": "https://pinjuihuang2007.github.io/web_test",
   "crewLoginUrl": "https://vamsys.io/login/china_airlines_virtual",
   "discordUrl": "https://discord.gg/USDFnDamPG",
   "facebookUrl": "https://www.facebook.com/groups/596448671760640",
   "introVideoUrl": "https://youtu.be/wL98U1r6JDk?si=2vU1z39H22a3R4P4",
   "heroVideoFile": "assets/video/hero.mp4",
   "heroVideoEmbedUrl": "https://www.youtube.com/embed/mOUhXYManWc?autoplay=1&mute=1&loop=1&playlist=mOUhXYManWc&controls=0&showinfo=0&autohide=1&modestbranding=1",
-    "ogImage": "https://pinjuihuang2007.github.io/web_test/assets/img/ogimage.jpg",
+  "ogImage": "https://pinjuihuang2007.github.io/web_test/assets/img/ogimage.jpg",
   "flipFlap": {
     "header": "　　班次　　　　　　出發　　　　　　　　飛往　　　　　離場　　抵達",
     "footer": "本欄資訊僅提供 \"VATSIM\" 與 \"IVAO\" 台灣航班"
   },
   "locales": [
-    { "code": "zh-TW", "lang": "zh-Hant-TW", "permalink": "index.html", "href": "/" },
-    { "code": "en", "lang": "en", "permalink": "index-en.html", "href": "/index-en.html" }
+    { "code": "zh-TW", "lang": "zh-Hant-TW", "permalink": "index.html", "href": "index.html" },
+    { "code": "en", "lang": "en", "permalink": "index-en.html", "href": "index-en.html" }
   ],
   "footerLinks": [
     { "label": "Home", "href": "#" },

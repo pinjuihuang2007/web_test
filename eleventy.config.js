@@ -1,17 +1,23 @@
-module.exports = function(eleventyConfig) {
-  // 複製靜態資源與資料夾
+module.exports = function (eleventyConfig) {
   eleventyConfig.addPassthroughCopy("assets");
-  eleventyConfig.addPassthroughCopy("_data");
-   eleventyConfig.addPassthroughCopy("admin");
+  eleventyConfig.addPassthroughCopy("robots.txt");
+  eleventyConfig.addPassthroughCopy("googleb88de4eb2fef16bf.html");
+  eleventyConfig.addPassthroughCopy("inner-page.html");
+  eleventyConfig.addPassthroughCopy("admin.html");
+  eleventyConfig.addPassthroughCopy("map-tool-internal-calva.html");
+
+  eleventyConfig.addFilter("slashDate", (isoDate) => isoDate.replace(/-/g, "/"));
+
   return {
     dir: {
       input: ".",
+      output: "_site",
       includes: "_includes",
       data: "_data",
-      output: "_site"
     },
-    pathPrefix: "/web_test/", // 關鍵：對應你的 GitHub Repository 名稱
+    pathPrefix: "/web_test/",
+    templateFormats: ["njk"],
     htmlTemplateEngine: "njk",
-    markdownTemplateEngine: "njk"
+    markdownTemplateEngine: false,
   };
 };

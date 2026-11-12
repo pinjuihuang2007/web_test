@@ -1,3 +1,5 @@
 _site/
 node_modules/
+.eleventy-cache/
+.idea/
 .DS_Store

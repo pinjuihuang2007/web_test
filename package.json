@@ -1,12 +1,13 @@
 {
-  "name": "web_test",
+  "name": "china-airlines-virtual-site",
   "version": "1.0.0",
-  "description": "China Airlines Virtual Eleventy Site",
+  "private": true,
+  "description": "中華虛擬航空官方網站，使用 Eleventy 產生靜態頁面",
   "scripts": {
-    "build": "npx @11ty/eleventy",
-    "start": "npx @11ty/eleventy --serve"
+    "build": "eleventy",
+    "start": "eleventy --serve"
   },
-  "dependencies": {
-    "@11ty/eleventy": "^3.0.0"
+  "devDependencies": {
+    "@11ty/eleventy": "^3.1.2"
   }
 }
