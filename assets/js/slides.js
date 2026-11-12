@@ -20,15 +20,16 @@
     slides.forEach(function (s) { s.classList.add('in'); });
   }
 
-  // ---- 首頁影片：優先播放自家影片檔；檔案不存在時才退回 YouTube ----
+  // ---- 首頁影片：優先播放自家影片檔；檔案不存在時，電腦退回 YouTube、手機顯示封面圖 ----
   var video = document.getElementById('hero-video');
   if (video) {
     var fellBack = false;
+    var touchDevice = window.matchMedia && window.matchMedia('(hover: none), (pointer: coarse)').matches;
     var useYouTube = function () {
       if (fellBack) return;
       fellBack = true;
       var url = video.getAttribute('data-fallback');
-      if (!url) return;
+      if (!url || touchDevice) return;     // 手機的瀏覽器不會自動播放 YouTube 嵌入，維持封面圖
       var f = document.createElement('iframe');
       f.src = url;
       f.title = '';
@@ -41,8 +42,18 @@
     var source = video.querySelector('source');
     if (source) source.addEventListener('error', useYouTube);
     video.addEventListener('error', useYouTube);
-    var p = video.play();
-    if (p && p.catch) p.catch(function () { /* 被瀏覽器擋下時維持封面圖 */ });
+
+    // iOS 要求：靜音、行內播放，而且要在程式裡明確設定才會自動播放
+    video.muted = true; video.defaultMuted = true; video.playsInline = true;
+    video.setAttribute('muted', ''); video.setAttribute('playsinline', ''); video.setAttribute('webkit-playsinline', '');
+    var tryPlay = function () { var p = video.play(); if (p && p.catch) p.catch(function () {}); };
+    tryPlay();
+    video.addEventListener('canplay', tryPlay, { once: true });
+    // 省電模式等情況下被擋時，使用者第一次觸碰畫面就補播
+    var kick = function () { if (video.paused) tryPlay(); };
+    ['touchstart', 'pointerdown', 'scroll'].forEach(function (ev) { window.addEventListener(ev, kick, { once: true, passive: true }); });
+    // 回到分頁／頁面可見時繼續播
+    document.addEventListener('visibilitychange', function () { if (!document.hidden) kick(); });
   }
 
   // ---- 隱私權政策視窗 ----

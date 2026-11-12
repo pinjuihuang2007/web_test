@@ -26,20 +26,27 @@ h1, h2, h3, h4 { margin: 0; }
   min-height: 100vh; min-height: 100dvh;
   scroll-snap-align: start; scroll-snap-stop: always;
   position: relative; display: flex; align-items: center;
-  padding: 96px 9vw 72px; overflow: hidden; background: #fff;
+  padding: 96px 9vw 72px; overflow: hidden;
 }
-.slide.tint-l { background: linear-gradient(180deg, #e9e1f8 0%, #f4effc 50%, #fff 100%); }
-.slide.tint-p { background: linear-gradient(180deg, #fde6ef 0%, #fcf1f6 50%, #fff 100%); }
-.slide.tint-l.strong { background: linear-gradient(180deg, #d8cbf3 0%, #ece4fa 45%, #fff 100%); }
-.slide.tint-end { background: linear-gradient(180deg, #fff 0%, #f1eafc 55%, #e2d6f6 100%); }
+/* 相鄰兩頁的顏色一頭一尾完全相接：每頁漸層「頂端色 = 上一頁底端色」 */
+.slide { --c0: #fff; --c1: #fff; background: linear-gradient(180deg, var(--c0) 0%, var(--c1) 100%); }
+#why-us        { --c0: #ffffff; --c1: #f1eafc; }
+#announcements { --c0: #f1eafc; --c1: #fcebf3; }
+#live          { --c0: #fcebf3; --c1: #efe7fb; }
+#dispatch      { --c0: #efe7fb; --c1: #fcebf3; }
+#statistics    { --c0: #fcebf3; --c1: #e9e0f8; }
+#member        { --c0: #e9e0f8; --c1: #fcebf3; }
+#hiring        { --c0: #fcebf3; --c1: #efe7fb; }
+#faq           { --c0: #efe7fb; --c1: #f6f1fd; }
+#partners      { --c0: #f6f1fd; --c1: #e2d6f6; }
 
 /* 柔光裝飾（每頁右上粉、左下紫） */
 .slide:not(.hero)::before, .slide:not(.hero)::after {
   content: ""; position: absolute; border-radius: 50%; filter: blur(70px);
   pointer-events: none; z-index: 0;
 }
-.slide:not(.hero)::before { width: 480px; height: 480px; top: -140px; right: -120px; background: radial-gradient(circle, rgba(244, 143, 181, .42), transparent 70%); }
-.slide:not(.hero)::after  { width: 520px; height: 520px; bottom: -180px; left: -140px; background: radial-gradient(circle, rgba(150, 120, 220, .30), transparent 70%); }
+.slide:not(.hero)::before { width: 420px; height: 420px; top: 10%; right: -160px; background: radial-gradient(circle, rgba(244, 143, 181, .42), transparent 70%); }
+.slide:not(.hero)::after  { width: 440px; height: 440px; bottom: 10%; left: -180px; background: radial-gradient(circle, rgba(150, 120, 220, .30), transparent 70%); }
 
 .inner { width: 100%; max-width: 1040px; margin: 0 auto; position: relative; z-index: 2; }
 .inner.narrow { max-width: 760px; }
@@ -264,17 +271,85 @@ dialog button { margin-top: 10px; background: var(--grad); color: #fff; border: 
   .scroll-hint { animation: none; }
 }
 /* 手機或螢幕很矮時放寬，避免內容被卡住 */
-@media (max-height: 640px), (max-width: 700px) {
-  html { scroll-snap-type: y proximity; }
-  .slide { padding-top: 84px; padding-bottom: 56px; }
-}
+
 
 /* ---------- 加入主畫面（獨立 App 模式）與瀏海安全區 ---------- */
 .top { padding-left: max(6vw, env(safe-area-inset-left)); padding-right: max(6vw, env(safe-area-inset-right)); padding-top: calc(10px + env(safe-area-inset-top)); }
 .slide { padding-left: max(9vw, calc(env(safe-area-inset-left) + 24px)); padding-right: max(9vw, calc(env(safe-area-inset-right) + 24px)); padding-bottom: calc(72px + env(safe-area-inset-bottom)); }
 @media (max-width: 700px) { .slide { padding-left: max(34px, calc(env(safe-area-inset-left) + 30px)); padding-right: 20px; } }
-@media (max-height: 640px), (max-width: 700px) { .slide { padding-top: calc(84px + env(safe-area-inset-top)); padding-bottom: calc(56px + env(safe-area-inset-bottom)); } }
 .dots { left: max(22px, calc(env(safe-area-inset-left) + 8px)); }
 @media (max-width: 700px) { .dots { left: max(9px, env(safe-area-inset-left)); } }
 button, a { touch-action: manipulation; }
 @media (max-width: 520px) { .stats { gap: 12px; } .stats span { font-size: 13px; } }
+
+/* ---------- 手機：每一頁剛好一個畫面，滑一下換一頁 ---------- */
+@media (max-width: 700px) {
+  html { scroll-snap-type: y mandatory; }
+  .slide { height: 100vh; height: 100dvh; min-height: 0; padding-top: calc(66px + env(safe-area-inset-top)); padding-bottom: calc(18px + env(safe-area-inset-bottom)); }
+  .slide.hero { padding-bottom: calc(60px + env(safe-area-inset-bottom)); }
+  .tag { margin-bottom: 6px; font-size: 11.5px; }
+  h2 { font-size: clamp(24px, 7vw, 30px); margin-bottom: 8px; }
+  .sub { font-size: 14px; margin-bottom: 12px; line-height: 1.55; }
+  .welcome { margin-top: 14px; font-size: 16px; }
+  /* 一～三欄的內容改成緊湊清單 */
+  .cols { gap: 12px; }
+  .col { padding-top: 10px; display: grid; grid-template-columns: 30px 1fr; column-gap: 12px; align-items: start; }
+  .col i { grid-row: span 2; font-size: 24px; margin: 0; }
+  .col h3 { font-size: 16px; margin-bottom: 2px; }
+  .col p { font-size: 13.5px; line-height: 1.5; }
+  /* 公告：左右滑動的小卡片 */
+  .ann-grid { display: flex; gap: 12px; overflow-x: auto; scroll-snap-type: x mandatory; margin-right: -20px; padding: 2px 20px 10px 0; -webkit-overflow-scrolling: touch; overscroll-behavior-x: contain; }
+  .ann { flex: 0 0 80%; scroll-snap-align: start; }
+  .ann .body { padding: 12px 14px 14px; }
+  .ann h3 { font-size: 16px; }
+  .ann p { font-size: 13.5px; -webkit-line-clamp: 3; }
+  /* 即時航班：只顯示前 6 筆 */
+  .board { max-height: none; overflow-x: auto; }
+  .board tbody tr:nth-child(n+7) { display: none; }
+  .board th, .board td { padding: 8px 10px; font-size: 13px; }
+  .list { gap: 12px; } .list strong { font-size: 15px; } .list span { font-size: 13px; }
+  .stats { margin: 0 0 14px; }
+  .tabs { margin-bottom: 10px; gap: 6px; } .tab { padding: 5px 11px; font-size: 12.5px; }
+  .rank li { padding: 6px 0; font-size: 14px; }
+  .latest { margin-top: 12px; font-size: 14px; }
+  .login-prompt { padding: 20px; } .idcard { padding: 20px; }
+  details { padding: 10px 0; } summary { font-size: 15px; } details p { font-size: 13.5px; margin-top: 6px; }
+  .partners { grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 8px; margin-bottom: 14px; }
+  .partner { padding: 10px 6px; gap: 4px; border-radius: 12px; }
+  .partner .logo { height: 36px; } .partner img { max-width: 80px; max-height: 32px; }
+  .partner .cap { display: none; }
+  .foot .social { margin-bottom: 8px; } .foot .social a { width: 36px; height: 36px; font-size: 19px; }
+  .foot .links { margin-bottom: 8px; gap: 6px 14px; } .foot p { margin-bottom: 3px; font-size: 12px; }
+  .scroll-hint { bottom: calc(14px + env(safe-area-inset-bottom)); }
+}
+/* 螢幕很矮（例如 iPhone SE 的 Safari、橫放手機）再縮一階 */
+@media (max-width: 700px) and (max-height: 640px) {
+  .sub { display: none; } .tag { display: none; }
+  .slide { padding-top: calc(60px + env(safe-area-inset-top)); }
+  h2 { font-size: 22px; margin-bottom: 8px; }
+  .col p { display: none; }
+  .board tbody tr:nth-child(n+6) { display: none; }
+  .rank li:nth-child(n+5) { display: none; }
+  .stats b { font-size: 26px; }
+  .rank li { padding: 4px 0; }
+  .latest { margin-top: 6px; }
+  .stats { margin-bottom: 8px; }
+}
+
+/* ---------- 頂端列：懸浮圓角膠囊（左右不頂滿） ---------- */
+.top {
+  top: calc(10px + env(safe-area-inset-top)); left: 12px; right: 12px; width: auto; max-width: 1120px; margin: 0 auto;
+  padding: 7px 8px 7px 20px; border: 1px solid rgba(255, 255, 255, .7); border-radius: 999px;
+  background: rgba(255, 255, 255, .72); backdrop-filter: blur(18px) saturate(1.4); -webkit-backdrop-filter: blur(18px) saturate(1.4);
+  box-shadow: 0 8px 30px rgba(95, 69, 163, .16), 0 1px 0 rgba(255, 255, 255, .8) inset;
+}
+.brand img { height: 36px; }
+.top-links .pill { padding: 7px 18px; background: rgba(255, 255, 255, .6); }
+@media (max-width: 560px) {
+  .top { left: 10px; right: 10px; padding: 5px 6px 5px 14px; }
+  .brand img { height: 30px; }
+  .top-links { gap: 10px; font-size: 12.5px; }
+  .top-links .pill { padding: 6px 12px; }
+}
+@media (max-width: 700px) { .slide { padding-top: calc(80px + env(safe-area-inset-top)); } }
+@media (max-width: 700px) and (max-height: 640px) { .slide { padding-top: calc(74px + env(safe-area-inset-top)); } }
