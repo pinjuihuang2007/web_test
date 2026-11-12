@@ -79,17 +79,24 @@
     var updated = document.getElementById('live-updated');
     var visible = false, timer = null, loading = false;
 
-    // 復古翻頁看板：手機 6 列、電腦 7 列；航班多於列數時每 9 秒翻到下一頁
+    // 復古翻頁看板：列數固定（電腦 10 列、手機 12 列）；航班多於列數時每 10 秒輪播下一頁
     var fbRoot = document.getElementById('fb-rows'), fbMsg = document.getElementById('fb-msg'), fbPage = document.getElementById('fb-page');
     var narrow = window.matchMedia && window.matchMedia('(max-width: 700px)').matches;
-    var board = (fbRoot && window.CALVAFlipBoard) ? window.CALVAFlipBoard.create(fbRoot, {
-      rows: narrow ? 6 : 7,
-      cols: [{ len: 3, cls: 'st' }, { len: 7, cls: 'cs' }, { len: 4, cls: 'ty' }, { len: 4, cls: 'fr' }, { len: 4, cls: 'to' }]
-    }) : null;
-    var perPage = narrow ? 6 : 7, pages = [], pageNo = 0, pager = null;
+    var COLS = [{ cls: 'st', len: 3 }, { cls: 'cs', len: 7 }, { cls: 'ty', len: 4 }, { cls: 'fr', len: 4 }, { cls: 'to', len: 4 }, { cls: 'fl', len: 3 }, { cls: 'gs', len: 3 }]
+      .filter(function (c) { return !narrow || ['st', 'cs', 'fr', 'to'].indexOf(c.cls) !== -1; });
+    var perPage = narrow ? 12 : 10;
+    var board = (fbRoot && window.CALVAFlipBoard) ? window.CALVAFlipBoard.create(fbRoot, { rows: perPage, cols: COLS }) : null;
+    var labels = document.getElementById('fb-labels');
+    if (labels) COLS.forEach(function (c) {
+      var sp = document.createElement('span');
+      sp.textContent = labels.getAttribute('data-' + c.cls) || '';
+      sp.style.width = 'calc((var(--w) + 2px) * ' + c.len + ')';
+      labels.appendChild(sp);
+    });
+    var pages = [], pageNo = 0, pager = null;
     var showPage = function () {
       if (!board) return;
-      board.set(pages[pageNo] || []);
+      board.set((pages[pageNo] || []).map(function (o) { return COLS.map(function (c) { return o[c.cls]; }); }));
       if (fbPage) fbPage.textContent = pages.length > 1 ? (pageNo + 1) + ' / ' + pages.length : '';
     };
     var setBoard = function (rows, msg) {
@@ -100,9 +107,8 @@
       if (fbMsg) { fbMsg.textContent = msg || ''; fbMsg.hidden = !msg; }
       showPage();
       if (pager) { clearInterval(pager); pager = null; }
-      if (pages.length > 1) pager = setInterval(function () { if (visible && !document.hidden) { pageNo = (pageNo + 1) % pages.length; showPage(); } }, 9000);
+      if (pages.length > 1) pager = setInterval(function () { if (visible && !document.hidden) { pageNo = (pageNo + 1) % pages.length; showPage(); } }, 10000);
     };
-
     var cell = function (tr, text, cls) {
       var td = document.createElement('td');
       if (cls) td.className = cls;
@@ -132,9 +138,13 @@
           if (!flights.length) { message(liveBody.getAttribute('data-empty')); }
           else {
             liveBody.textContent = '';
-            setBoard(flights.slice(0, 28).map(function (p) {
-              var fp = p.flight_plan;
-              return [TW.indexOf(fp.departure) !== -1 ? 'DEP' : 'ARR', String(p.callsign), String(fp.aircraft_short || ''), String(fp.departure || ''), String(fp.arrival || '')];
+            setBoard(flights.slice(0, 60).map(function (p) {
+              var fp = p.flight_plan, alt = Number(p.altitude) || 0, gs = Number(p.groundspeed) || 0;
+              return {
+                st: TW.indexOf(fp.departure) !== -1 ? 'DEP' : 'ARR', cs: String(p.callsign), ty: String(fp.aircraft_short || ''),
+                fr: String(fp.departure || ''), to: String(fp.arrival || ''),
+                fl: alt >= 1000 ? ('00' + Math.round(alt / 100)).slice(-3) : 'GND', gs: ('00' + Math.min(999, Math.round(gs))).slice(-3)
+              };
             }), '');
             flights.slice(0, 15).forEach(function (p) {
               var fp = p.flight_plan, isDep = TW.indexOf(fp.departure) !== -1;
