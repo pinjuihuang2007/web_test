@@ -12,7 +12,7 @@ window.SITE_CONFIG = {
     clientId: "1364",
     // 必須與 vAMSYS 後台登記的「重新導向網址」一字不差（包含最後的斜線）。
     // 留空＝使用目前網站的根網址，例如 https://china-airlines-virtual.github.io/
-    redirectUri: "",
+    redirectUri: "https://pinjuihuang2007.github.io/web_test/",
     scope: "identity:basic pilot:read flights:read",
     // 只有在瀏覽器因跨網域限制無法直接呼叫 vAMSYS 時才需要：
     // 填入 Supabase Edge Function 的網址，例如 https://zuiyduedpvnqrzfnclqn.supabase.co/functions/v1/vamsys-proxy

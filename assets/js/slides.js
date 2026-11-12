@@ -14,7 +14,7 @@
         var i = slides.indexOf(e.target);
         dots.forEach(function (d, j) { d.classList.toggle('on', i === j); });
       });
-    }, { threshold: 0.01 });
+    }, { threshold: 0.55 });
     slides.forEach(function (s) { io.observe(s); });
   } else {
     slides.forEach(function (s) { s.classList.add('in'); });
