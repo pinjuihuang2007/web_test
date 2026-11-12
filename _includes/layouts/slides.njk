@@ -4,7 +4,7 @@
 
 <head>
   <meta charset="utf-8">
-  <meta content="width=device-width, initial-scale=1.0" name="viewport">
+  <meta content="width=device-width, initial-scale=1.0, viewport-fit=cover" name="viewport">
 
   <title>{{ headTitle }}</title>
   <meta name="description" content="{{ headDescription }}">
@@ -18,7 +18,13 @@
   <meta property="og:type" content="website">
 
   <link href="assets/img/favicon.png" rel="icon">
-  <link href="assets/img/favicon.png" rel="apple-touch-icon">
+  <link href="assets/img/apple-touch-icon.png" rel="apple-touch-icon">
+  <link href="manifest.webmanifest" rel="manifest">
+  <meta name="mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="default">
+  <meta name="apple-mobile-web-app-title" content="CALVA">
+  <meta name="format-detection" content="telephone=no">
   <link rel="preload" as="image" href="assets/img/hero-bg.jpg">
 
   <!-- 只用到 Discord / Facebook 等圖示，沿用站內既有的 boxicons -->
@@ -34,6 +40,7 @@
   <script defer src="assets/js/slides.js"></script>
   <script defer src="assets/js/content.js"></script>
   <script defer src="assets/js/member.js"></script>
+  <script defer src="assets/js/pwa.js"></script>
 
 </body>
 

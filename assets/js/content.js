@@ -37,6 +37,25 @@
     });
   }
 
+  // ---- 點圖片看原圖（完整、不裁切、不縮放）----
+  var lightbox = null;
+  function openLightbox(url, alt) {
+    if (!lightbox) {
+      lightbox = document.createElement('dialog');
+      lightbox.className = 'lightbox';
+      var big = document.createElement('img');
+      var x = document.createElement('button');
+      x.type = 'button'; x.className = 'lb-close'; x.textContent = '\u00d7'; x.setAttribute('aria-label', 'Close');
+      x.addEventListener('click', function () { lightbox.close(); });
+      lightbox.addEventListener('click', function (e) { if (e.target === lightbox) lightbox.close(); });
+      lightbox.appendChild(big); lightbox.appendChild(x);
+      document.body.appendChild(lightbox);
+    }
+    var im = lightbox.querySelector('img');
+    im.src = url; im.alt = alt;
+    if (typeof lightbox.showModal === 'function') lightbox.showModal(); else window.open(url, '_blank', 'noopener');
+  }
+
   // ---- 活動公告（中英文頁都顯示，最新 3 則）----
   var list = document.getElementById('announcement-list');
   if (list) {
@@ -51,9 +70,15 @@
           if (typeof a.image_url === 'string' && /^https:\/\//.test(a.image_url)) {
             var img = document.createElement('img');
             img.src = a.image_url;
-            img.alt = '';
+            img.alt = a.title || '';
             img.loading = 'lazy';
-            card.appendChild(img);
+            var frame = document.createElement('button');
+            frame.type = 'button';
+            frame.className = 'ann-img';
+            frame.setAttribute('aria-label', a.title || 'image');
+            frame.appendChild(img);
+            frame.addEventListener('click', openLightbox.bind(null, a.image_url, a.title || ''));
+            card.appendChild(frame);
           }
 
           var body = document.createElement('div');

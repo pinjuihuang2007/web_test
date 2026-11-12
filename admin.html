@@ -42,7 +42,7 @@
   @media (prefers-color-scheme: dark) { .tabs button[aria-selected=true] { color:#1a0a2c; } }
   #msg { min-height:24px; margin:0 0 12px; font-size:14px; }
   #msg.bad { color:var(--plum); } #msg.ok { color:var(--ok); }
-  .preview { display:block; max-width:260px; max-height:160px; margin:10px 0; border-radius:8px; border:1px solid var(--line); }
+  .preview { display:block; width:260px; max-width:100%; aspect-ratio:16/9; object-fit:cover; margin:10px 0; border-radius:8px; border:1px solid var(--line); }
   .row { display:flex; gap:10px; align-items:center; flex-wrap:wrap; }
   .item { display:flex; gap:12px; align-items:center; justify-content:space-between; flex-wrap:wrap;
     padding:12px 0; border-bottom:1px solid var(--line); }
@@ -89,7 +89,7 @@
           <div class="hint">首頁依日期由新到舊排序，最多顯示最新 3 則。</div></div>
         <div class="field"><label for="a_body">內容</label><textarea id="a_body" maxlength="1000"></textarea>
           <div class="hint">可換行，首頁最多顯示 5 行。</div></div>
-        <div class="field"><label for="a_image">圖片（選填）</label>
+        <div class="field"><label for="a_image">圖片（選填，建議 16:9，例如 1600×900；網站卡片會以 16:9 顯示，點開可看完整原圖）</label>
           <input id="a_image" type="text" placeholder="https://… （上傳後會自動填入）">
           <img id="a_preview" class="preview" alt="" hidden>
           <input id="a_file" type="file" accept="image/png,image/jpeg,image/webp,image/gif">

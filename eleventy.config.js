@@ -4,6 +4,8 @@ module.exports = function (eleventyConfig) {
   eleventyConfig.addPassthroughCopy("googleb88de4eb2fef16bf.html");
   eleventyConfig.addPassthroughCopy("inner-page.html");
   eleventyConfig.addPassthroughCopy("admin.html");
+  eleventyConfig.addPassthroughCopy("manifest.webmanifest");
+  eleventyConfig.addPassthroughCopy("sw.js");
   eleventyConfig.addPassthroughCopy("map-tool-internal-calva.html");
 
   eleventyConfig.addFilter("slashDate", (isoDate) => isoDate.replace(/-/g, "/"));
