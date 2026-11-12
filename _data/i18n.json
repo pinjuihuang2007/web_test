@@ -81,7 +81,9 @@
     },
     "announcements": {
       "heading": "活動公告",
-      "empty": "目前沒有活動公告，敬請期待。"
+      "empty": "目前沒有活動公告，敬請期待。",
+      "pinned": "置頂",
+      "cd": { "prefix": "距離下一場活動還有", "d": "天", "h": "小時", "m": "分鐘", "soon": "即將開始", "ics": "加入行事曆" }
     },
     "live": {
       "heading": "台灣航機即時動態",
@@ -91,6 +93,12 @@
       "error": "暫時無法連線到 VATSIM，稍後會自動重試。",
       "dep": "離場",
       "arr": "抵達",
+      "pre": "預飛",
+      "atc": "管制員在線",
+      "noAtc": "目前沒有台灣管制員在線",
+      "tabAll": "全部",
+      "tabOther": "其他",
+      "tabsLabel": "依機場篩選",
       "updated": "更新時間",
       "cols": { "status": "動態", "callsign": "呼號", "type": "機型", "from": "出發", "to": "目的地" }
     },
@@ -108,7 +116,11 @@
       "hours": "飛行時數",
       "flights": "完成班次",
       "joined": "加入日期",
-      "other": "其他資料"
+      "other": "其他資料",
+      "mapTitle": "我的航線圖",
+      "mapFlights": "個航班",
+      "mapRoutes": "條航線",
+      "mapAirports": "座機場"
     },
     "faq": {
       "heading": "常見問題",
@@ -251,7 +263,9 @@
     },
     "announcements": {
       "heading": "Announcements",
-      "empty": "No announcements right now. Stay tuned!"
+      "empty": "No announcements right now. Stay tuned!",
+      "pinned": "Pinned",
+      "cd": { "prefix": "Next event in", "d": "d", "h": "h", "m": "min", "soon": "Starting soon", "ics": "Add to calendar" }
     },
     "live": {
       "heading": "Live Traffic in Taiwan",
@@ -261,6 +275,12 @@
       "error": "Can't reach VATSIM right now. Retrying automatically.",
       "dep": "DEP",
       "arr": "ARR",
+      "pre": "Filed",
+      "atc": "ATC online",
+      "noAtc": "No Taiwan ATC online right now",
+      "tabAll": "All",
+      "tabOther": "Other",
+      "tabsLabel": "Filter by airport",
       "updated": "Updated",
       "cols": { "status": "Status", "callsign": "Callsign", "type": "Type", "from": "From", "to": "To" }
     },
@@ -278,7 +298,11 @@
       "hours": "Flight hours",
       "flights": "Flights",
       "joined": "Joined",
-      "other": "Other details"
+      "other": "Other details",
+      "mapTitle": "My route map",
+      "mapFlights": "flights",
+      "mapRoutes": "routes",
+      "mapAirports": "airports"
     },
     "faq": {
       "heading": "FAQ",

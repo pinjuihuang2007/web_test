@@ -2,6 +2,21 @@
 (function () {
   'use strict';
 
+  // ---- 深色／淺色模式：完全跟著裝置（系統）設定，裝置切換時即時跟著變 ----
+  (function () {
+    if (!window.matchMedia) return;
+    var mq = matchMedia('(prefers-color-scheme: dark)');
+    var root = document.documentElement;
+    var metaTheme = document.querySelector('meta[name="theme-color"]');
+    var apply = function () {
+      root.setAttribute('data-theme', mq.matches ? 'dark' : 'light');
+      if (metaTheme) metaTheme.setAttribute('content', mq.matches ? '#14101f' : '#7b5cc4');
+    };
+    apply();
+    if (mq.addEventListener) mq.addEventListener('change', apply);
+    else if (mq.addListener) mq.addListener(apply);
+  })();
+
   var slides = [].slice.call(document.querySelectorAll('.slide'));
   var dots = [].slice.call(document.querySelectorAll('.dots a'));
 
@@ -83,7 +98,8 @@
     var narrow = window.matchMedia && window.matchMedia('(max-width: 700px)').matches;
     var COLS = [{ cls: 'st', len: 3 }, { cls: 'cs', len: 7 }, { cls: 'ty', len: 4 }, { cls: 'fr', len: 4 }, { cls: 'to', len: 4 }, { cls: 'fl', len: 3 }, { cls: 'gs', len: 3 }]
       .filter(function (c) { return !narrow || ['st', 'cs', 'fr', 'to'].indexOf(c.cls) !== -1; });
-    var perPage = narrow ? 9 : 8;
+    var perPage = narrow ? 8 : (window.innerHeight >= 820 ? 8 : 7);
+    if (fbRoot && fbRoot.parentNode) fbRoot.parentNode.style.setProperty('--rows', perPage);
     var board = (fbRoot && window.CALVAFlipBoard) ? window.CALVAFlipBoard.create(fbRoot, { rows: perPage, cols: COLS }) : null;
     var labels = document.getElementById('fb-labels');
     if (labels) COLS.forEach(function (c) {
@@ -93,6 +109,50 @@
       labels.appendChild(sp);
     });
     var pages = [], pageNo = 0, pager = null;
+
+    // 機場分頁：全部 / RCTP / RCSS / RCKH / RCMQ / 其他
+    var MAIN = ['RCTP', 'RCSS', 'RCKH', 'RCMQ'], sel = 'ALL', lastData = null;
+    var tabsEl = document.getElementById('fb-tabs');
+    if (tabsEl) {
+      [['ALL', tabsEl.getAttribute('data-all')]].concat(MAIN.map(function (m) { return [m, m]; }), [['OTHER', tabsEl.getAttribute('data-other')]])
+        .forEach(function (t) {
+          var b = document.createElement('button');
+          b.type = 'button'; b.textContent = t[1]; b.setAttribute('data-k', t[0]);
+          b.setAttribute('aria-pressed', t[0] === sel ? 'true' : 'false');
+          b.addEventListener('click', function () {
+            sel = t[0]; pageNo = 0;
+            [].forEach.call(tabsEl.children, function (x) { x.setAttribute('aria-pressed', x === b ? 'true' : 'false'); });
+            if (lastData) render(lastData);
+          });
+          tabsEl.appendChild(b);
+        });
+    }
+    var inSel = function (a, b) {
+      if (sel === 'ALL') return true;
+      if (sel === 'OTHER') return MAIN.indexOf(a) === -1 && MAIN.indexOf(b) === -1;
+      return a === sel || b === sel;
+    };
+    var atcEl = document.getElementById('fb-atc'), footEl = document.getElementById('fb-foot');
+    var renderAtc = function (list) {
+      if (!atcEl) return;
+      atcEl.textContent = '';
+      var shown = list.filter(function (c) {
+        if (sel === 'ALL') return true;
+        var cs = String(c.callsign);
+        if (cs.indexOf('RCAA') === 0) return true;                 // 台北區管（FIR）全部機場都適用
+        if (sel === 'OTHER') return !MAIN.some(function (m) { return cs.indexOf(m) === 0; });
+        return cs.indexOf(sel) === 0;
+      });
+      if (!shown.length) {
+        var none = document.createElement('span'); none.className = 'none';
+        none.textContent = footEl.getAttribute('data-none'); atcEl.appendChild(none); return;
+      }
+      shown.slice(0, 12).forEach(function (c) {
+        var chip = document.createElement('span'); chip.className = 'chip';
+        chip.textContent = String(c.callsign) + (c.frequency ? ' ' + c.frequency : '');
+        atcEl.appendChild(chip);
+      });
+    };
     var showPage = function () {
       if (!board) return;
       board.set((pages[pageNo] || []).map(function (o) { return COLS.map(function (c) { return o[c.cls]; }); }));
@@ -123,43 +183,58 @@
       liveBody.appendChild(tr);
     };
 
+    var rowOf = function (p, kind) {
+      var fp = p.flight_plan, isTwDep = TW.indexOf(fp.departure) !== -1;
+      if (kind === 'pre') return { st: 'PRE', cs: String(p.callsign), ty: String(fp.aircraft_short || ''), fr: String(fp.departure || ''), to: String(fp.arrival || ''), fl: '---', gs: '---' };
+      var alt = Number(p.altitude) || 0, gs = Number(p.groundspeed) || 0;
+      return {
+        st: isTwDep ? 'DEP' : 'ARR', cs: String(p.callsign), ty: String(fp.aircraft_short || ''),
+        fr: String(fp.departure || ''), to: String(fp.arrival || ''),
+        fl: alt >= 1000 ? ('00' + Math.round(alt / 100)).slice(-3) : 'GND', gs: ('00' + Math.min(999, Math.round(gs))).slice(-3)
+      };
+    };
+    // 依目前選的機場分頁，重畫看板、純文字表格與管制員列
+    var render = function (d) {
+      var rows = [];
+      d.flights.forEach(function (p) { if (inSel(p.flight_plan.departure, p.flight_plan.arrival)) rows.push(rowOf(p, 'live')); });
+      d.pre.forEach(function (p) { if (inSel(p.flight_plan.departure, p.flight_plan.arrival)) rows.push(rowOf(p, 'pre')); });
+      liveBody.textContent = '';
+      if (!rows.length) { message(liveBody.getAttribute('data-empty')); }
+      else {
+        setBoard(rows.slice(0, 60), '');
+        rows.slice(0, 15).forEach(function (r) {
+          var tr = document.createElement('tr');
+          var td = document.createElement('td');
+          var badge = document.createElement('span');
+          badge.className = 'badge ' + r.st.toLowerCase();
+          badge.textContent = liveBody.getAttribute('data-' + r.st.toLowerCase());
+          td.appendChild(badge); tr.appendChild(td);
+          cell(tr, r.cs, 'cs'); cell(tr, r.ty || '—'); cell(tr, r.fr || '—'); cell(tr, r.to || '—');
+          liveBody.appendChild(tr);
+        });
+      }
+      renderAtc(d.atc);
+    };
+
     var refresh = function () {
       if (loading || document.hidden) return;
       loading = true;
       fetch('https://data.vatsim.net/v3/vatsim-data.json')
         .then(function (r) { if (!r.ok) throw new Error('http'); return r.json(); })
         .then(function (data) {
-          var flights = (data.pilots || []).filter(function (p) {
+          var twPlan = function (p) {
             var fp = p.flight_plan;
             return fp && (TW.indexOf(fp.departure) !== -1 || TW.indexOf(fp.arrival) !== -1);
-          }).sort(function (a, b) { return String(a.callsign).localeCompare(String(b.callsign)); });
-
-          if (!flights.length) { message(liveBody.getAttribute('data-empty')); }
-          else {
-            liveBody.textContent = '';
-            setBoard(flights.slice(0, 60).map(function (p) {
-              var fp = p.flight_plan, alt = Number(p.altitude) || 0, gs = Number(p.groundspeed) || 0;
-              return {
-                st: TW.indexOf(fp.departure) !== -1 ? 'DEP' : 'ARR', cs: String(p.callsign), ty: String(fp.aircraft_short || ''),
-                fr: String(fp.departure || ''), to: String(fp.arrival || ''),
-                fl: alt >= 1000 ? ('00' + Math.round(alt / 100)).slice(-3) : 'GND', gs: ('00' + Math.min(999, Math.round(gs))).slice(-3)
-              };
-            }), '');
-            flights.slice(0, 15).forEach(function (p) {
-              var fp = p.flight_plan, isDep = TW.indexOf(fp.departure) !== -1;
-              var tr = document.createElement('tr');
-              var td = document.createElement('td');
-              var badge = document.createElement('span');
-              badge.className = 'badge ' + (isDep ? 'dep' : 'arr');
-              badge.textContent = liveBody.getAttribute(isDep ? 'data-dep' : 'data-arr');
-              td.appendChild(badge); tr.appendChild(td);
-              cell(tr, String(p.callsign), 'cs');
-              cell(tr, String(fp.aircraft_short || '—'));
-              cell(tr, String(fp.departure || '—'));
-              cell(tr, String(fp.arrival || '—'));
-              liveBody.appendChild(tr);
-            });
-          }
+          };
+          var byCs = function (a, b) { return String(a.callsign).localeCompare(String(b.callsign)); };
+          lastData = {
+            flights: (data.pilots || []).filter(twPlan).sort(byCs),
+            pre: (data.prefiles || []).filter(twPlan).sort(byCs),
+            // 台灣管制席位：呼號以 RC 開頭，且不是觀察員（facility 0）
+            atc: (data.controllers || []).filter(function (c) { return /^RC/.test(String(c.callsign)) && Number(c.facility) > 0; })
+                   .sort(byCs)
+          };
+          render(lastData);
           if (updated) updated.textContent = updated.getAttribute('data-label') + ' ' + new Date().toLocaleTimeString();
         })
         .catch(function () { message(liveBody.getAttribute('data-error')); })

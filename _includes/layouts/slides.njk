@@ -6,6 +6,13 @@
   <meta charset="utf-8">
   <meta content="width=device-width, initial-scale=1.0, viewport-fit=cover" name="viewport">
 
+  <script>
+    /* 在畫面出現前先依裝置的深色／淺色設定套用，避免閃一下 */
+    (function () { try {
+      var m = (window.matchMedia && matchMedia('(prefers-color-scheme: dark)').matches) ? 'dark' : 'light';
+      document.documentElement.setAttribute('data-theme', m);
+    } catch (e) { document.documentElement.setAttribute('data-theme', 'light'); } })();
+  </script>
   <title>{{ headTitle }}</title>
   <meta name="description" content="{{ headDescription }}">
   <meta name="keywords" content="{{ t.meta.keywords }}">
@@ -15,6 +22,12 @@
   <meta property="og:url" content="{{ site.url }}/{{ pageHref or '' }}">
   <meta property="og:site_name" content="{{ t.meta.siteName }}">
   <meta property="og:image" content="{{ site.ogImage }}">
+  <meta property="og:image:width" content="1200">
+  <meta property="og:image:height" content="630">
+  <meta property="og:image:alt" content="{{ t.meta.siteName }}">
+  <meta property="og:locale" content="{{ localeMeta.lang }}">
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:image" content="{{ site.ogImage }}">
   <meta property="og:type" content="website">
 
   <link href="assets/img/favicon.png" rel="icon">
@@ -40,6 +53,7 @@
   <script defer src="assets/js/flipboard.js"></script>
   <script defer src="assets/js/slides.js"></script>
   <script defer src="assets/js/content.js"></script>
+  <script defer src="assets/js/airports.js"></script>
   <script defer src="assets/js/member.js"></script>
   <script defer src="assets/js/pwa.js"></script>
 

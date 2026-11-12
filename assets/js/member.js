@@ -166,6 +166,7 @@
       ]);
       render(results[0], results[1]);
       setStatus('');
+      if (!PROXY) loadMap(token);
     } catch (e) {
       if (e.code === 'auth') { drop(TOKEN_KEY); showLogin(); setStatus(T('expired')); }
       else if (e.code === 'http') { showLogin(); setStatus(T('failed')); }
@@ -243,10 +244,98 @@
     var out = el('button', 'out', T('logout'));
     out.type = 'button';
     out.addEventListener('click', function () {
-      drop(TOKEN_KEY); cardEl.hidden = true; cardEl.textContent = ''; setStatus(''); showLogin();
+      drop(TOKEN_KEY); cardEl.hidden = true; cardEl.textContent = ''; if (mapBox) { mapBox.hidden = true; mapBox.textContent = ''; box.classList.remove('has-map'); } setStatus(''); showLogin();
     });
     cardEl.appendChild(out);
     cardEl.hidden = false;
+  }
+
+
+  /* ---------------- 我的航線圖（實驗功能） ----------------
+     vAMSYS 的航班紀錄欄位名稱我們還沒有實際驗證過，所以這裡盡量寬鬆地讀取；
+     讀不到任何航線時就不顯示這一塊，不會影響會員證本身。 */
+  var mapBox = document.getElementById('member-map');
+  var AIRPORTS = window.CALVA_AIRPORTS || {};
+  function icao(v) {
+    if (!v) return null;
+    if (typeof v === 'string') { v = v.trim(); return /^[A-Za-z]{4}$/.test(v) ? v.toUpperCase() : null; }
+    if (typeof v === 'object') return icao(v.icao || v.icao_code || v.ident || v.code || v.airport);
+    return null;
+  }
+  function routeOf(it) {
+    if (!it || typeof it !== 'object') return null;
+    var d = icao(it.departure_airport) || icao(it.departure) || icao(it.dep) || icao(it.dep_icao) || icao(it.origin) || icao(it.from) ||
+            icao(it.departure_icao) || icao(it.departure_airport_icao) || icao(it.departureAirport);
+    var a = icao(it.arrival_airport) || icao(it.arrival) || icao(it.arr) || icao(it.arr_icao) || icao(it.destination) || icao(it.to) ||
+            icao(it.arrival_icao) || icao(it.arrival_airport_icao) || icao(it.arrivalAirport);
+    return d && a ? [d, a] : null;
+  }
+  async function fetchRoutes(token) {
+    var paths = ['/flights', '/pireps', '/flights/history'];
+    for (var i = 0; i < paths.length; i++) {
+      try {
+        var d = await api(paths[i], token);
+        var list = Array.isArray(d) ? d : (d && (d.data || d.flights || d.pireps)) || [];
+        if (!Array.isArray(list)) continue;
+        var routes = list.map(routeOf).filter(Boolean);
+        if (routes.length) return routes;
+      } catch (e) { if (e && e.code === 'auth') return []; }
+    }
+    return [];
+  }
+  function svgEl(tag, attrs) {
+    var e = document.createElementNS('http://www.w3.org/2000/svg', tag);
+    for (var k in attrs) e.setAttribute(k, attrs[k]);
+    return e;
+  }
+  function drawMap(routes) {
+    var pts = {}, pairs = {}, total = routes.length;
+    routes.forEach(function (r) {
+      if (!AIRPORTS[r[0]] || !AIRPORTS[r[1]] || r[0] === r[1]) return;
+      pts[r[0]] = AIRPORTS[r[0]]; pts[r[1]] = AIRPORTS[r[1]];
+      var key = [r[0], r[1]].sort().join('-'); pairs[key] = (pairs[key] || 0) + 1;
+    });
+    var codes = Object.keys(pts);
+    if (!codes.length) return;
+    var lons = codes.map(function (c) { return pts[c][1]; });
+    var wrap = Math.max.apply(null, lons) - Math.min.apply(null, lons) > 180;     // 跨太平洋：把西半球加 360 度接起來
+    var P = {};
+    codes.forEach(function (c) { P[c] = [pts[c][0], wrap && pts[c][1] < 0 ? pts[c][1] + 360 : pts[c][1]]; });
+    var la = codes.map(function (c) { return P[c][0]; }), lo = codes.map(function (c) { return P[c][1]; });
+    var minLa = Math.min.apply(null, la), maxLa = Math.max.apply(null, la), minLo = Math.min.apply(null, lo), maxLo = Math.max.apply(null, lo);
+    var spanLa = Math.max(maxLa - minLa, 6), spanLo = Math.max(maxLo - minLo, 8);
+    var W = 600, H = 340, pad = 46, sc = Math.min((W - 2 * pad) / spanLo, (H - 2 * pad) / spanLa);
+    var cLo = (minLo + maxLo) / 2, cLa = (minLa + maxLa) / 2;
+    var X = function (c) { return (P[c][1] - cLo) * sc + W / 2; }, Y = function (c) { return H / 2 - (P[c][0] - cLa) * sc; };
+
+    var svg = svgEl('svg', { viewBox: '0 0 ' + W + ' ' + H, role: 'img', 'aria-label': mapBox.getAttribute('data-title') || '' });
+    for (var g = 1; g < 6; g++) {                                                   // 淡淡的格線
+      svg.appendChild(svgEl('line', { x1: g * W / 6, y1: 0, x2: g * W / 6, y2: H, class: 'grid' }));
+      if (g < 4) svg.appendChild(svgEl('line', { x1: 0, y1: g * H / 4, x2: W, y2: g * H / 4, class: 'grid' }));
+    }
+    Object.keys(pairs).forEach(function (k) {
+      var ab = k.split('-'), x1 = X(ab[0]), y1 = Y(ab[0]), x2 = X(ab[1]), y2 = Y(ab[1]);
+      var mx = (x1 + x2) / 2, my = (y1 + y2) / 2, dx = x2 - x1, dy = y2 - y1, len = Math.sqrt(dx * dx + dy * dy) || 1;
+      var cx = mx - dy / len * len * 0.18, cy = my + dx / len * len * 0.18 - len * 0.05;
+      svg.appendChild(svgEl('path', { d: 'M' + x1 + ' ' + y1 + ' Q' + cx + ' ' + cy + ' ' + x2 + ' ' + y2, class: 'route', 'stroke-width': Math.min(1.4 + pairs[k] * 0.5, 4) }));
+    });
+    codes.forEach(function (c) {
+      svg.appendChild(svgEl('circle', { cx: X(c), cy: Y(c), r: 4.2, class: 'ap' }));
+      var t = svgEl('text', { x: X(c), y: Y(c) - 9, 'text-anchor': 'middle', class: 'apl' });
+      t.textContent = c; svg.appendChild(t);
+    });
+
+    mapBox.textContent = '';
+    var h = el('h4', '', mapBox.getAttribute('data-title') || '');
+    var sum = el('p', 'sum', total + ' ' + (mapBox.getAttribute('data-flights') || '') + ' · ' +
+      Object.keys(pairs).length + ' ' + (mapBox.getAttribute('data-routes') || '') + ' · ' + codes.length + ' ' + (mapBox.getAttribute('data-airports') || ''));
+    mapBox.appendChild(h); mapBox.appendChild(svg); mapBox.appendChild(sum);
+    mapBox.hidden = false;
+    box.classList.add('has-map');
+  }
+  async function loadMap(token) {
+    if (!mapBox) return;
+    try { var routes = await fetchRoutes(token); if (routes.length) drawMap(routes); } catch (e) { /* 讀不到就不顯示 */ }
   }
 
   /* ---------------- 進入頁面時的流程 ---------------- */

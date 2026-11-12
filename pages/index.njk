@@ -12,7 +12,7 @@ eleventyComputed:
 ---
   <!-- ======= Header（白色半透明底 + 深紫字 logo） ======= -->
   <header class="top">
-    <a class="brand" href="#hero"><img src="assets/img/logo-dark.png" alt="{{ t.meta.siteName }}"></a>
+    <a class="brand" href="#hero"><img class="logo-l" src="assets/img/logo-dark.png" alt="{{ t.meta.siteName }}"><img class="logo-d" src="assets/img/logo-light.png" alt="" aria-hidden="true"></a>
     <nav class="top-links">
       {%- if flightHistoryHref %}
       <a href="{{ flightHistoryHref }}">{{ t.nav.flightHistory }}</a>
@@ -52,6 +52,7 @@ eleventyComputed:
       <h1 class="fade" data-key="hero_title">{{ t.hero.title }}</h1>
       <p class="lead fade" data-key="hero_subtitle">{{ t.hero.subtitle }}</p>
       <p class="notice fade" data-key="notice" hidden></p>
+      <p><a class="notice fade" id="hero-countdown" href="#announcements" hidden></a></p>
       <div class="fade"><a class="btn" href="{{ site.discordUrl }}" target="_blank" rel="noopener">{{ t.hero.cta }}</a></div>
     </div>
     <div class="scroll-hint">SCROLL ↓</div>
@@ -77,7 +78,13 @@ eleventyComputed:
     <div class="inner">
       <p class="tag fade">ANNOUNCEMENTS</p>
       <h2 class="fade">{{ t.announcements.heading }}</h2>
-      <div id="announcement-list" class="ann-grid"></div>
+      <div id="countdown" class="countdown fade" hidden
+           data-prefix="{{ t.announcements.cd.prefix }}" data-d="{{ t.announcements.cd.d }}" data-h="{{ t.announcements.cd.h }}"
+           data-m="{{ t.announcements.cd.m }}" data-soon="{{ t.announcements.cd.soon }}" data-ics="{{ t.announcements.cd.ics }}">
+        <span class="cd-label"></span><b class="cd-time"></b><span class="cd-title"></span>
+        <button type="button" class="cd-ics">{{ t.announcements.cd.ics }}</button>
+      </div>
+      <div id="announcement-list" class="ann-grid" data-pin="{{ t.announcements.pinned }}"></div>
       <p id="announcement-empty" class="empty">{{ t.announcements.empty }}</p>
     </div>
   </section>
@@ -93,10 +100,12 @@ eleventyComputed:
           <span class="fb-title"><i class="fb-led"></i>LIVE · TAIWAN</span>
           <span class="fb-meta"><span id="live-updated" data-label="{{ t.live.updated }}"></span><span id="fb-page"></span></span>
         </div>
+        <div class="fb-tabs" id="fb-tabs" role="group" aria-label="{{ t.live.tabsLabel }}" data-all="{{ t.live.tabAll }}" data-other="{{ t.live.tabOther }}"></div>
         <div class="fb-labels" id="fb-labels" aria-hidden="true"
              data-st="{{ t.live.cols.status }}" data-cs="{{ t.live.cols.callsign }}" data-ty="{{ t.live.cols.type }}"
              data-fr="{{ t.live.cols.from }}" data-to="{{ t.live.cols.to }}" data-fl="FL" data-gs="GS"></div>
         <div class="fb-rows" id="fb-rows" aria-hidden="true"></div>
+        <div class="fb-foot" id="fb-foot" data-none="{{ t.live.noAtc }}"><span class="fb-atc-l">{{ t.live.atc }}</span><span class="fb-atc" id="fb-atc"></span></div>
         <p class="fb-msg" id="fb-msg">{{ t.live.loading }}</p>
       </div>
       <!-- 給螢幕閱讀器與沒有 JS 時使用的純文字表格（視覺上隱藏） -->
@@ -109,7 +118,7 @@ eleventyComputed:
               <th>{{ t.live.cols.from }}</th><th>{{ t.live.cols.to }}</th>
             </tr>
           </thead>
-          <tbody id="live-body" data-dep="{{ t.live.dep }}" data-arr="{{ t.live.arr }}"
+          <tbody id="live-body" data-dep="{{ t.live.dep }}" data-arr="{{ t.live.arr }}" data-pre="{{ t.live.pre }}"
                  data-empty="{{ t.live.empty }}" data-error="{{ t.live.error }}" data-loading="{{ t.live.loading }}">
             <tr><td colspan="5" class="note">{{ t.live.loading }}</td></tr>
           </tbody>
@@ -178,6 +187,8 @@ eleventyComputed:
         </div>
         <p id="member-status" class="empty" role="status" hidden></p>
         <div id="member-card" class="idcard" hidden></div>
+        <div id="member-map" class="route-map" hidden data-title="{{ t.member.mapTitle }}" data-flights="{{ t.member.mapFlights }}"
+             data-routes="{{ t.member.mapRoutes }}" data-airports="{{ t.member.mapAirports }}"></div>
       </div>
     </div>
   </section>
