@@ -78,12 +78,12 @@
     var updated = document.getElementById('live-updated');
     var visible = false, timer = null, loading = false;
 
-    // 復古翻頁看板：列數固定（電腦 10 列、手機 12 列）；航班多於列數時每 10 秒輪播下一頁
+    // 復古翻頁看板：列數固定（電腦 8 列、手機 9 列）；航班多於列數時每 10 秒輪播下一頁
     var fbRoot = document.getElementById('fb-rows'), fbMsg = document.getElementById('fb-msg'), fbPage = document.getElementById('fb-page');
     var narrow = window.matchMedia && window.matchMedia('(max-width: 700px)').matches;
     var COLS = [{ cls: 'st', len: 3 }, { cls: 'cs', len: 7 }, { cls: 'ty', len: 4 }, { cls: 'fr', len: 4 }, { cls: 'to', len: 4 }, { cls: 'fl', len: 3 }, { cls: 'gs', len: 3 }]
       .filter(function (c) { return !narrow || ['st', 'cs', 'fr', 'to'].indexOf(c.cls) !== -1; });
-    var perPage = narrow ? 12 : 10;
+    var perPage = narrow ? 9 : 8;
     var board = (fbRoot && window.CALVAFlipBoard) ? window.CALVAFlipBoard.create(fbRoot, { rows: perPage, cols: COLS }) : null;
     var labels = document.getElementById('fb-labels');
     if (labels) COLS.forEach(function (c) {
