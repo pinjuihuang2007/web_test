@@ -5,5 +5,10 @@
   if (location.protocol === 'http:' && location.hostname !== 'localhost' && location.hostname !== '127.0.0.1') return;
   window.addEventListener('load', function () {
     navigator.serviceWorker.register('sw.js').catch(function () {});
+    // 新版本接手後，自動重新整理一次，確保看到的是最新頁面
+    var had = !!navigator.serviceWorker.controller, done = false;
+    navigator.serviceWorker.addEventListener('controllerchange', function () {
+      if (had && !done) { done = true; window.location.reload(); }
+    });
   });
 })();

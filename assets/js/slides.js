@@ -20,16 +20,15 @@
     slides.forEach(function (s) { s.classList.add('in'); });
   }
 
-  // ---- 首頁影片：優先播放自家影片檔；檔案不存在時，電腦退回 YouTube、手機顯示封面圖 ----
+  // ---- 首頁影片：優先播放自家影片檔；檔案不存在時退回 YouTube（靜音、行內播放，手機也可自動播放） ----
   var video = document.getElementById('hero-video');
   if (video) {
     var fellBack = false;
-    var touchDevice = window.matchMedia && window.matchMedia('(hover: none), (pointer: coarse)').matches;
     var useYouTube = function () {
       if (fellBack) return;
       fellBack = true;
       var url = video.getAttribute('data-fallback');
-      if (!url || touchDevice) return;     // 手機的瀏覽器不會自動播放 YouTube 嵌入，維持封面圖
+      if (!url) return;
       var f = document.createElement('iframe');
       f.src = url;
       f.title = '';
