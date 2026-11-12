@@ -79,6 +79,30 @@
     var updated = document.getElementById('live-updated');
     var visible = false, timer = null, loading = false;
 
+    // 復古翻頁看板：手機 6 列、電腦 7 列；航班多於列數時每 9 秒翻到下一頁
+    var fbRoot = document.getElementById('fb-rows'), fbMsg = document.getElementById('fb-msg'), fbPage = document.getElementById('fb-page');
+    var narrow = window.matchMedia && window.matchMedia('(max-width: 700px)').matches;
+    var board = (fbRoot && window.CALVAFlipBoard) ? window.CALVAFlipBoard.create(fbRoot, {
+      rows: narrow ? 6 : 7,
+      cols: [{ len: 3, cls: 'st' }, { len: 7, cls: 'cs' }, { len: 4, cls: 'ty' }, { len: 4, cls: 'fr' }, { len: 4, cls: 'to' }]
+    }) : null;
+    var perPage = narrow ? 6 : 7, pages = [], pageNo = 0, pager = null;
+    var showPage = function () {
+      if (!board) return;
+      board.set(pages[pageNo] || []);
+      if (fbPage) fbPage.textContent = pages.length > 1 ? (pageNo + 1) + ' / ' + pages.length : '';
+    };
+    var setBoard = function (rows, msg) {
+      if (!board) return;
+      pages = [];
+      for (var i = 0; i < rows.length; i += perPage) pages.push(rows.slice(i, i + perPage));
+      if (pageNo >= pages.length) pageNo = 0;
+      if (fbMsg) { fbMsg.textContent = msg || ''; fbMsg.hidden = !msg; }
+      showPage();
+      if (pager) { clearInterval(pager); pager = null; }
+      if (pages.length > 1) pager = setInterval(function () { if (visible && !document.hidden) { pageNo = (pageNo + 1) % pages.length; showPage(); } }, 9000);
+    };
+
     var cell = function (tr, text, cls) {
       var td = document.createElement('td');
       if (cls) td.className = cls;
@@ -87,6 +111,7 @@
       return td;
     };
     var message = function (text) {
+      setBoard([], text);
       liveBody.textContent = '';
       var tr = document.createElement('tr');
       var td = cell(tr, text, 'note'); td.colSpan = 5;
@@ -107,6 +132,10 @@
           if (!flights.length) { message(liveBody.getAttribute('data-empty')); }
           else {
             liveBody.textContent = '';
+            setBoard(flights.slice(0, 28).map(function (p) {
+              var fp = p.flight_plan;
+              return [TW.indexOf(fp.departure) !== -1 ? 'DEP' : 'ARR', String(p.callsign), String(fp.aircraft_short || ''), String(fp.departure || ''), String(fp.arrival || '')];
+            }), '');
             flights.slice(0, 15).forEach(function (p) {
               var fp = p.flight_plan, isDep = TW.indexOf(fp.departure) !== -1;
               var tr = document.createElement('tr');

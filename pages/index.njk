@@ -88,8 +88,22 @@ eleventyComputed:
       <p class="tag fade">LIVE</p>
       <h2 class="fade">{{ t.live.heading }}</h2>
       <p class="sub fade">{{ t.live.intro }}</p>
-      <div class="board fade">
+      <div class="flipboard fade" id="flipboard">
+        <div class="fb-head">
+          <span class="fb-title"><i class="fb-led"></i>LIVE · TAIWAN</span>
+          <span class="fb-page" id="fb-page"></span>
+        </div>
+        <div class="fb-labels" aria-hidden="true">
+          <span class="c-st">{{ t.live.cols.status }}</span><span class="c-cs">{{ t.live.cols.callsign }}</span>
+          <span class="c-ty">{{ t.live.cols.type }}</span><span class="c-fr">{{ t.live.cols.from }}</span><span class="c-to">{{ t.live.cols.to }}</span>
+        </div>
+        <div class="fb-rows" id="fb-rows" aria-hidden="true"></div>
+        <p class="fb-msg" id="fb-msg">{{ t.live.loading }}</p>
+      </div>
+      <!-- 給螢幕閱讀器與沒有 JS 時使用的純文字表格（視覺上隱藏） -->
+      <div class="sr-only">
         <table>
+          <caption>{{ t.live.heading }}</caption>
           <thead>
             <tr>
               <th>{{ t.live.cols.status }}</th><th>{{ t.live.cols.callsign }}</th><th>{{ t.live.cols.type }}</th>
@@ -97,7 +111,7 @@ eleventyComputed:
             </tr>
           </thead>
           <tbody id="live-body" data-dep="{{ t.live.dep }}" data-arr="{{ t.live.arr }}"
-                 data-empty="{{ t.live.empty }}" data-error="{{ t.live.error }}">
+                 data-empty="{{ t.live.empty }}" data-error="{{ t.live.error }}" data-loading="{{ t.live.loading }}">
             <tr><td colspan="5" class="note">{{ t.live.loading }}</td></tr>
           </tbody>
         </table>
