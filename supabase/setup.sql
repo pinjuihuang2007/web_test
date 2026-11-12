@@ -21,6 +21,14 @@ create table if not exists public.announcements (
   created_at timestamptz not null default now()
 );
 
+-- 2b) 公告進階欄位（英文版、置頂、預約發布、活動時間）。可重複執行。
+alter table public.announcements
+  add column if not exists title_en   text check (title_en is null or char_length(title_en) <= 120),
+  add column if not exists body_en    text check (body_en  is null or char_length(body_en)  <= 1000),
+  add column if not exists pinned     boolean not null default false,
+  add column if not exists publish_at timestamptz,   -- 預約發布：到這個時間才會對外顯示（空白＝立刻）
+  add column if not exists event_at   timestamptz;   -- 活動開始時間，用於首頁倒數
+
 -- 3) 管理員名單：只有在這張表裡的帳號才能修改內容
 create table if not exists public.admins (
   user_id uuid primary key references auth.users(id) on delete cascade
@@ -64,7 +72,7 @@ drop policy if exists "ann admin update" on public.announcements;
 drop policy if exists "ann admin delete" on public.announcements;
 
 create policy "ann public read"  on public.announcements
-  for select using (published = true);
+  for select using (published = true and (publish_at is null or publish_at <= now()));
 create policy "ann admin read"   on public.announcements
   for select to authenticated using (public.is_admin());
 create policy "ann admin insert" on public.announcements

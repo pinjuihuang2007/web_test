@@ -23,7 +23,7 @@
   .field { margin-bottom:18px; }
   .field:last-child { margin-bottom:0; }
   label { display:block; font-weight:600; margin-bottom:6px; font-size:15px; }
-  input[type=text], input[type=email], input[type=password], input[type=date], textarea {
+  input[type=text], input[type=email], input[type=password], input[type=date], input[type=time], input[type=datetime-local], textarea {
     width:100%; font:inherit; color:inherit; background:transparent;
     border:1px solid var(--line); border-radius:10px; padding:10px 12px; }
   textarea { min-height:100px; resize:vertical; }
@@ -54,6 +54,13 @@
   .badge.on { color:var(--ok); border-color:var(--ok); }
   .check { display:flex; align-items:center; gap:8px; font-weight:600; }
   .check input { width:auto; }
+  .pair { display:grid; grid-template-columns:1fr 1fr; gap:12px; } @media (max-width:560px){ .pair { grid-template-columns:1fr; } }
+  .sep { border:0; border-top:1px dashed var(--line); margin:20px 0; }
+  .pv { max-width:340px; border:1px solid var(--line); border-radius:16px; overflow:hidden; background:var(--card); }
+  .pv .im { aspect-ratio:16/9; background:#efe7fb; } .pv .im img { width:100%; height:100%; object-fit:cover; display:block; }
+  .pv .bd { padding:14px 16px 18px; } .pv time { color:var(--plum); font-size:13px; font-weight:600; }
+  .pv h3 { margin:4px 0 6px; font-size:18px; } .pv p { margin:0; color:var(--muted); white-space:pre-line; font-size:14px; }
+  .pv .pin { display:inline-block; font-size:12px; color:#fff; background:var(--plum); border-radius:999px; padding:1px 9px; margin-left:6px; }
   [hidden] { display:none !important; }
 </style>
 </head>
@@ -85,8 +92,12 @@
         <h2 id="a_formtitle">新增公告</h2>
         <input type="hidden" id="a_id">
         <div class="field"><label for="a_title">標題（必填）</label><input id="a_title" type="text" maxlength="120"></div>
-        <div class="field"><label for="a_date">活動日期</label><input id="a_date" type="date">
-          <div class="hint">首頁依日期由新到舊排序，最多顯示最新 3 則。</div></div>
+        <div class="pair">
+          <div class="field"><label for="a_date">活動日期</label><input id="a_date" type="date">
+            <div class="hint">首頁先顯示置頂的，其餘依日期由新到舊，最多 3 則。</div></div>
+          <div class="field"><label for="a_time">活動開始時間（台灣時間，選填）</label><input id="a_time" type="time">
+            <div class="hint">有填日期＋時間，首頁就會自動做「距離下一場還有…」倒數。</div></div>
+        </div>
         <div class="field"><label for="a_body">內容</label><textarea id="a_body" maxlength="1000"></textarea>
           <div class="hint">可換行，首頁最多顯示 5 行。</div></div>
         <div class="field"><label for="a_image">圖片（選填，建議 16:9，例如 1600×900；網站卡片會以 16:9 顯示，點開可看完整原圖）</label>
@@ -94,8 +105,23 @@
           <img id="a_preview" class="preview" alt="" hidden>
           <input id="a_file" type="file" accept="image/png,image/jpeg,image/webp,image/gif">
           <div class="hint">支援 PNG、JPG、WebP、GIF，5MB 以內；建議橫式 16:9。</div></div>
+        <hr class="sep">
+        <div class="field"><label for="a_title_en">English title（選填；英文版網頁使用，空白則顯示中文）</label><input id="a_title_en" type="text" maxlength="120"></div>
+        <div class="field"><label for="a_body_en">English content（選填）</label><textarea id="a_body_en" maxlength="1000"></textarea></div>
+        <hr class="sep">
+        <div class="pair">
+          <div class="field"><label for="a_pubat">預約發布時間（台灣時間，選填）</label><input id="a_pubat" type="datetime-local">
+            <div class="hint">空白＝立刻發布。填了之後，到時間才會自動出現在網站上，不用守著按發布。需勾選下方「發佈到網站」。</div></div>
+          <div class="field"><label class="check" style="margin-top:30px"><input id="a_pin" type="checkbox"> 置頂（排在最前面）</label></div>
+        </div>
         <div class="field"><label class="check"><input id="a_pub" type="checkbox" checked> 發佈到網站（取消勾選＝存成草稿）</label></div>
+        <div class="field" id="a_pvbox" hidden>
+          <div class="row" style="margin-bottom:10px"><b>預覽</b>
+            <button type="button" class="small" id="a_pv_zh">中文</button><button type="button" class="small" id="a_pv_en">English</button></div>
+          <div id="a_pvcard" class="pv"></div>
+        </div>
         <div class="actions">
+          <button id="a_preview_btn" type="button">預覽</button>
           <button id="a_save" class="primary" type="button">儲存公告</button>
           <button id="a_cancel" type="button" hidden>取消編輯</button>
         </div>
@@ -218,6 +244,8 @@
     $("a_id").value = ""; $("a_title").value = ""; $("a_date").value = "";
     $("a_body").value = ""; $("a_image").value = ""; $("a_file").value = "";
     $("a_preview").hidden = true; $("a_pub").checked = true;
+    $("a_time").value = ""; $("a_title_en").value = ""; $("a_body_en").value = "";
+    $("a_pubat").value = ""; $("a_pin").checked = false; $("a_pvbox").hidden = true;
     $("a_formtitle").textContent = "新增公告";
     $("a_cancel").hidden = true;
   }
@@ -233,13 +261,31 @@
     $("a_preview").hidden = !ok;
     if (ok) $("a_preview").src = a.image_url;
     $("a_pub").checked = !!a.published;
+    var ev = a.event_at ? tpe(a.event_at) : null;
+    $("a_time").value = ev ? ev.time : "";
+    if (ev && !a.event_date) $("a_date").value = ev.date;
+    $("a_title_en").value = a.title_en || ""; $("a_body_en").value = a.body_en || "";
+    var pa = a.publish_at ? tpe(a.publish_at) : null;
+    $("a_pubat").value = pa ? pa.date + "T" + pa.time : "";
+    $("a_pin").checked = !!a.pinned; $("a_pvbox").hidden = true;
     $("a_formtitle").textContent = "編輯公告";
     $("a_cancel").hidden = false;
     window.scrollTo({ top: 0, behavior: "smooth" });
   }
 
+  // 台灣時間的 日期／時間 字串（資料庫存的是 UTC）
+  function tpe(iso) {
+    var s = new Date(iso).toLocaleString("sv-SE", { timeZone: "Asia/Taipei", hour12: false });   // 2026-11-13 20:30:00
+    return { date: s.slice(0, 10), time: s.slice(11, 16) };
+  }
+  function tpeToIso(date, time) {   // 把「台灣時間」轉成 ISO（UTC）
+    var d = new Date(date + "T" + (time || "00:00") + ":00+08:00");
+    return isNaN(d.getTime()) ? null : d.toISOString();
+  }
+
   async function loadAnnouncements() {
     var r = await db.from("announcements").select("*")
+      .order("pinned", { ascending: false })
       .order("event_date", { ascending: false, nullsFirst: false })
       .order("created_at", { ascending: false });
     if (r.error) { say("讀取公告失敗：" + r.error.message, true); return; }
@@ -252,7 +298,10 @@
       var t = el("div", "t");
       t.appendChild(el("b", "", a.title));
       t.appendChild(el("span", "", (a.event_date ? a.event_date.replace(/-/g, "/") : "未設日期") + " "));
-      t.appendChild(el("span", "badge" + (a.published ? " on" : ""), a.published ? "已發佈" : "草稿"));
+      var scheduled = a.published && a.publish_at && new Date(a.publish_at) > new Date();
+      t.appendChild(el("span", "badge" + (a.published && !scheduled ? " on" : ""), !a.published ? "草稿" : (scheduled ? "預約 " + tpe(a.publish_at).date.replace(/-/g, "/") + " " + tpe(a.publish_at).time : "已發佈")));
+      if (a.pinned) t.appendChild(el("span", "badge on", " 置頂"));
+      if (a.event_at) t.appendChild(el("span", "badge", " 倒數 " + tpe(a.event_at).time));
       row.appendChild(t);
 
       var acts = el("div", "row");
@@ -291,12 +340,20 @@
     var img = $("a_image").value.trim();
     if (!title) { say("請填寫公告標題。", true); $("a_title").focus(); return; }
     if (img && !/^https:\/\//.test(img)) { say("圖片網址必須以 https:// 開頭。", true); return; }
+    var pubat = $("a_pubat").value ? tpeToIso($("a_pubat").value.slice(0, 10), $("a_pubat").value.slice(11, 16)) : null;
+    var evAt = ($("a_date").value && $("a_time").value) ? tpeToIso($("a_date").value, $("a_time").value) : null;
+    if ($("a_time").value && !$("a_date").value) { say("有填活動時間，請同時選擇活動日期。", true); return; }
     var row = {
       title: title,
       body: $("a_body").value.trim(),
       event_date: $("a_date").value || null,
+      event_at: evAt,
       image_url: img || null,
-      published: $("a_pub").checked
+      published: $("a_pub").checked,
+      pinned: $("a_pin").checked,
+      publish_at: pubat,
+      title_en: $("a_title_en").value.trim() || null,
+      body_en: $("a_body_en").value.trim() || null
     };
     var id = $("a_id").value;
     var btn = $("a_save");
@@ -311,7 +368,28 @@
     loadAnnouncements();
   });
 
-  /* ------------------------- 首頁文字與圖片 ------------------------- */
+  /* 發布前預覽：和網站上的卡片長得一樣（中文／英文） */
+  var pvLang = "zh";
+  function renderPreview() {
+    var box = $("a_pvcard"); box.textContent = "";
+    var en = pvLang === "en";
+    var title = (en && $("a_title_en").value.trim()) || $("a_title").value.trim() || "（尚未填標題）";
+    var body = (en && $("a_body_en").value.trim()) || $("a_body").value.trim();
+    var img = $("a_image").value.trim();
+    if (/^https:\/\//.test(img)) { var im = el("div", "im"); var i2 = document.createElement("img"); i2.src = img; i2.alt = ""; im.appendChild(i2); box.appendChild(im); }
+    var bd = el("div", "bd");
+    var d = $("a_date").value;
+    if (d) { var line = el("time", "", d.replace(/-/g, "/") + ($("a_time").value ? " " + $("a_time").value : "")); bd.appendChild(line); }
+    if ($("a_pin").checked) bd.appendChild(el("span", "pin", en ? "Pinned" : "置頂"));
+    bd.appendChild(el("h3", "", title));
+    if (body) bd.appendChild(el("p", "", body));
+    box.appendChild(bd);
+  }
+  $("a_preview_btn").addEventListener("click", function () { $("a_pvbox").hidden = false; renderPreview(); $("a_pvbox").scrollIntoView({ behavior: "smooth", block: "nearest" }); });
+  $("a_pv_zh").addEventListener("click", function () { pvLang = "zh"; renderPreview(); });
+  $("a_pv_en").addEventListener("click", function () { pvLang = "en"; renderPreview(); });
+
+  /* ------------------------- 首頁文字與圖片 -------------------------
   function renderFields() {
     var box = $("fields");
     box.textContent = "";
