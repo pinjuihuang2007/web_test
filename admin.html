@@ -453,7 +453,14 @@
     e.preventDefault();
     say("登入中…");
     var r = await db.auth.signInWithPassword({ email: $("email").value.trim(), password: $("pw").value });
-    if (r.error) { say("登入失敗：Email 或密碼不正確。", true); return; }
+    if (r.error) {
+      var m = r.error.message || "";
+      var hint = /invalid login/i.test(m) ? "Email 或密碼不正確（或這個帳號不存在）。"
+        : /not confirmed/i.test(m) ? "這個 Email 還沒完成驗證，請到 Supabase 的 Authentication → Users 確認該帳號已驗證。"
+        : /fetch|network|failed|timeout|503|502|paused/i.test(m) ? "連不上 Supabase，專案可能被暫停了，請到 Supabase 後台按「Restore project」。"
+        : "";
+      say("登入失敗：" + (hint || m) + (hint ? "" : "") + " [" + m + "]", true); return;
+    }
     $("pw").value = "";
     await enter(r.data.session);
   });
