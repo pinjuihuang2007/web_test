@@ -62,6 +62,85 @@
       .then(function (r) { return r.ok ? r.json() : null; })
       .catch(function () { return null; });
   }
+  function buildCard(a) {
+    var pinLabel = (document.getElementById('announcement-list') || document.body).getAttribute('data-pin') || '';
+    var title = (!isZh && a.title_en) || a.title || '';
+    var text = (!isZh && a.body_en) || a.body || '';
+    var card = document.createElement('article');
+    card.className = 'ann';
+
+    if (typeof a.image_url === 'string' && /^https:\/\//.test(a.image_url)) {
+      var img = document.createElement('img');
+      img.src = a.image_url;
+      img.alt = title;
+      img.loading = 'lazy';
+      var frame = document.createElement('button');
+      frame.type = 'button';
+      frame.className = 'ann-img';
+      frame.setAttribute('aria-label', title || 'image');
+      frame.appendChild(img);
+      frame.addEventListener('click', openLightbox.bind(null, a.image_url, title));
+      card.appendChild(frame);
+    }
+
+    var body = document.createElement('div');
+    body.className = 'body';
+    if (a.event_date || a.pinned) {
+      var meta = document.createElement('div');
+      meta.className = 'meta';
+      if (a.pinned) {
+        var pin = document.createElement('span');
+        pin.className = 'pin';
+        pin.textContent = pinLabel;
+        meta.appendChild(pin);
+      }
+      if (a.event_date) {
+        var time = document.createElement('time');
+        time.dateTime = a.event_date;
+        time.textContent = String(a.event_date).replace(/-/g, '/');
+        meta.appendChild(time);
+      }
+      body.appendChild(meta);
+    }
+    var h = document.createElement('h3');
+    h.textContent = title;
+    body.appendChild(h);
+    if (text) {
+      var p = document.createElement('p');
+      p.textContent = text;
+      body.appendChild(p);
+    }
+    card.appendChild(body);
+    return card;
+  }
+
+  // 「全部公告」視窗：第一次打開時才載入（最多 60 則，含完整內文）
+  var allDlg = document.getElementById('ann-all'), allLoaded = false;
+  function openAll(focusId) {
+    if (!allDlg || typeof allDlg.showModal !== 'function') return;
+    var box = allDlg.querySelector('.ann-all-list');
+    var show = function () {
+      if (!allDlg.open) allDlg.showModal();
+      allDlg.scrollTop = 0;
+      if (focusId) {
+        var t = box.querySelector('[data-id="' + focusId + '"]');
+        if (t && t.scrollIntoView) t.scrollIntoView({ block: 'start' });
+      }
+    };
+    if (allLoaded) { show(); return; }
+    var q1 = 'announcements?select=id,title,body,event_date,event_at,image_url,pinned,title_en,body_en&published=eq.true&order=pinned.desc,event_date.desc.nullslast,created_at.desc&limit=60';
+    var q2 = 'announcements?select=id,title,body,event_date,image_url&published=eq.true&order=event_date.desc.nullslast,created_at.desc&limit=60';
+    getRaw(q1).then(function (r) { return r !== null ? r : getRaw(q2); }).then(function (rows) {
+      box.textContent = '';
+      (rows || []).forEach(function (a) { var cd = buildCard(a); cd.setAttribute('data-id', a.id); cd.classList.add('ann-full'); box.appendChild(cd); });
+      allLoaded = true; show();
+    });
+  }
+  if (allDlg) {
+    var xb = allDlg.querySelector('.ann-all-close');
+    if (xb) xb.addEventListener('click', function () { allDlg.close(); });
+    allDlg.addEventListener('click', function (e) { if (e.target === allDlg) allDlg.close(); });
+  }
   var list = document.getElementById('announcement-list');
   if (list) {
     var pinLabel = list.getAttribute('data-pin') || '';
@@ -76,55 +155,16 @@
         rows = rows || [];
         if (!rows.length) return;
         rows.forEach(function (a) {
-          var title = (!isZh && a.title_en) || a.title || '';
-          var text = (!isZh && a.body_en) || a.body || '';
-          var card = document.createElement('article');
-          card.className = 'ann';
-
-          if (typeof a.image_url === 'string' && /^https:\/\//.test(a.image_url)) {
-            var img = document.createElement('img');
-            img.src = a.image_url;
-            img.alt = title;
-            img.loading = 'lazy';
-            var frame = document.createElement('button');
-            frame.type = 'button';
-            frame.className = 'ann-img';
-            frame.setAttribute('aria-label', title || 'image');
-            frame.appendChild(img);
-            frame.addEventListener('click', openLightbox.bind(null, a.image_url, title));
-            card.appendChild(frame);
-          }
-
-          var body = document.createElement('div');
-          body.className = 'body';
-          if (a.event_date || a.pinned) {
-            var meta = document.createElement('div');
-            meta.className = 'meta';
-            if (a.pinned) {
-              var pin = document.createElement('span');
-              pin.className = 'pin';
-              pin.textContent = pinLabel;
-              meta.appendChild(pin);
-            }
-            if (a.event_date) {
-              var time = document.createElement('time');
-              time.dateTime = a.event_date;
-              time.textContent = String(a.event_date).replace(/-/g, '/');
-              meta.appendChild(time);
-            }
-            body.appendChild(meta);
-          }
-          var h = document.createElement('h3');
-          h.textContent = title;
-          body.appendChild(h);
-          if (text) {
-            var p = document.createElement('p');
-            p.textContent = text;
-            body.appendChild(p);
-          }
-          card.appendChild(body);
+          var card = buildCard(a);
+          card.classList.add('ann-click');
+          card.addEventListener('click', function (e) {
+            if (e.target.closest && e.target.closest('.ann-img')) return;
+            openAll(a.id);
+          });
           list.appendChild(card);
         });
+        var more = document.getElementById('ann-more');
+        if (more) { more.hidden = false; more.addEventListener('click', function () { openAll(); }); }
         var empty = document.getElementById('announcement-empty');
         if (empty) empty.hidden = true;
       });

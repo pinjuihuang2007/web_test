@@ -44,3 +44,35 @@
     });
   } catch (e) {}
 })();
+
+// 語言建議：中文頁但瀏覽器語言不是中文時，提示可切換英文版（只提示一次）
+(function () {
+  'use strict';
+  try {
+    var lang = (navigator.languages && navigator.languages[0]) || navigator.language || '';
+    if (!/^zh/i.test(document.documentElement.lang || '') || /^zh/i.test(lang) || !lang) return;
+    if (localStorage.getItem('calva_lang_hint')) return;
+    var link = null;
+    [].forEach.call(document.querySelectorAll('.top a'), function (a) { if (!link && /^English$/i.test((a.textContent || '').trim())) link = a; });
+    if (!link) return;
+    window.addEventListener('load', function () {
+      setTimeout(function () {
+        var bar = document.createElement('div');
+        bar.className = 'a2hs';
+        bar.setAttribute('role', 'dialog');
+        var msg = document.createElement('span');
+        msg.textContent = 'This page is in Traditional Chinese. View the English version?';
+        var go = document.createElement('a');
+        go.href = link.getAttribute('href'); go.textContent = 'English';
+        go.className = 'a2hs-go';
+        var x = document.createElement('button');
+        x.type = 'button'; x.textContent = '✕'; x.setAttribute('aria-label', 'Close');
+        var done = function () { try { localStorage.setItem('calva_lang_hint', '1'); } catch (e) {} };
+        go.addEventListener('click', done);
+        x.addEventListener('click', function () { done(); bar.remove(); });
+        bar.appendChild(msg); bar.appendChild(go); bar.appendChild(x);
+        document.body.appendChild(bar);
+      }, 1500);
+    });
+  } catch (e) {}
+})();

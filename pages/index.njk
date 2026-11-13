@@ -86,6 +86,7 @@ eleventyComputed:
       </div>
       <div id="announcement-list" class="ann-grid" data-pin="{{ t.announcements.pinned }}"></div>
       <p id="announcement-empty" class="empty">{{ t.announcements.empty }}</p>
+      <p class="ann-more-wrap"><button type="button" id="ann-more" class="ann-more" hidden>{{ t.announcements.all }}</button></p>
     </div>
   </section>
 
@@ -98,7 +99,7 @@ eleventyComputed:
       <div class="flipboard fade" id="flipboard">
         <div class="fb-head">
           <span class="fb-title"><i class="fb-led"></i>LIVE · TAIWAN</span>
-          <span class="fb-meta"><span id="live-updated" data-label="{{ t.live.updated }}"></span><span id="fb-page"></span></span>
+          <span class="fb-meta"><span class="fb-clock" id="fb-clock" aria-hidden="true"></span><span id="live-updated" data-label="{{ t.live.updated }}"></span><span id="fb-page"></span></span>
         </div>
         <div class="fb-tabs" id="fb-tabs" role="group" aria-label="{{ t.live.tabsLabel }}" data-all="{{ t.live.tabAll }}" data-other="{{ t.live.tabOther }}"></div>
         <div class="fb-labels" id="fb-labels" aria-hidden="true"
@@ -257,6 +258,12 @@ eleventyComputed:
   </section>
 
   </main>
+
+  <!-- 全部公告（點「查看全部公告」或公告卡片開啟） -->
+  <dialog id="ann-all" class="ann-all" aria-label="{{ t.announcements.allTitle }}">
+    <div class="ann-all-head"><h3>{{ t.announcements.allTitle }}</h3><button type="button" class="ann-all-close">{{ t.announcements.close }}</button></div>
+    <div class="ann-all-list"></div>
+  </dialog>
 
   <!-- 隱私權政策（點頁尾連結開啟） -->
   <dialog id="privacy">

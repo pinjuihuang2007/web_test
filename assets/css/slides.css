@@ -530,3 +530,28 @@ html[data-theme="dark"] .tile::after { background: rgba(12, 8, 26, .7); }
 .a2hs span { flex: 1; }
 .a2hs button { flex: none; border: 0; border-radius: 999px; padding: 8px 14px; font: inherit; font-weight: 600; color: #fff; background: var(--grad, #7b5cc4); cursor: pointer; }
 html[data-theme="dark"] .a2hs { background: rgba(30, 22, 50, .96); color: #efe9f6; border-color: rgba(182, 155, 230, .4); }
+
+/* 全部公告視窗 */
+.ann-click { cursor: pointer; }
+.ann-more-wrap { margin: 6px 0 0; text-align: left; }
+.ann-more { font: inherit; cursor: pointer; padding: 8px 20px; border-radius: 999px; border: 1px solid var(--violet-l, #d9ccf2); background: rgba(255, 255, 255, .6); color: var(--violet-d, #5a3fa0); }
+.ann-more:hover { background: var(--grad); color: #fff; border-color: transparent; }
+.ann-more[hidden] { display: none; }
+dialog.ann-all { max-width: 640px; max-height: 86dvh; max-height: 86vh; overflow: auto; padding: 22px; }
+.ann-all-list { display: grid; gap: 16px; margin-top: 12px; }
+.ann-all-list .ann { box-shadow: none; border: 1px solid var(--violet-l, #e6dded); }
+.ann-all-list .ann p { display: block; -webkit-line-clamp: unset; overflow: visible; font-size: 15px; }
+.ann-all-list .ann h3 { font-size: 18px; }
+.ann-all-list .ann-img { cursor: default; }
+html[data-theme="dark"] dialog.ann-all { background: #1e1632; color: #efe9f6; }
+html[data-theme="dark"] .ann-more { background: rgba(255, 255, 255, .08); color: #d9ccf2; border-color: rgba(182, 155, 230, .5); }
+
+.fb-clock { opacity: .9; }
+@media (max-width: 560px) { .fb-clock { display: none; } }
+.a2hs .a2hs-go { flex: none; border-radius: 999px; padding: 8px 14px; font-weight: 600; color: #fff; background: var(--grad, #7b5cc4); text-decoration: none; }
+.a2hs-go + button { background: transparent !important; color: inherit !important; padding: 6px 8px; }
+.ann-all-head { position: sticky; top: -22px; z-index: 2; display: flex; align-items: center; justify-content: space-between; gap: 12px; margin: -22px -22px 0; padding: 18px 22px 12px; background: inherit; }
+.ann-all-head h3 { margin: 0; }
+.ann-all-head .ann-all-close { margin: 0; flex: none; padding: 6px 16px; }
+html[data-theme="dark"] .ann-all-head { background: #1e1632; }
+dialog.ann-all { background: #fff; }

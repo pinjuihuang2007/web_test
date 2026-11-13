@@ -42,6 +42,18 @@
     all[next].scrollIntoView({ behavior: 'smooth', block: 'start' });
   });
 
+  // ---- 看板標題列的時鐘：台灣時間 + UTC（飛模擬飛行的人常用 Zulu 時間）----
+  (function () {
+    var el = document.getElementById('fb-clock');
+    if (!el) return;
+    var p2 = function (n) { return (n < 10 ? '0' : '') + n; };
+    var tick = function () {
+      var d = new Date(), t = new Date(d.getTime() + 8 * 3600 * 1000);
+      el.textContent = 'TPE ' + p2(t.getUTCHours()) + ':' + p2(t.getUTCMinutes()) + ' · UTC ' + p2(d.getUTCHours()) + ':' + p2(d.getUTCMinutes());
+    };
+    tick(); setInterval(tick, 15000);
+  })();
+
   var slides = [].slice.call(document.querySelectorAll('.slide'));
   var dots = [].slice.call(document.querySelectorAll('.dots a'));
 
