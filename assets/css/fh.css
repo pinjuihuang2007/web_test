@@ -1,0 +1,54 @@
+/* 聯飛細節頁的新版外觀：跟首頁一致（浮動圓角標題列、薰衣草漸層、深淺色跟隨裝置、新字體） */
+:root { --fh-bg1: #f3edfc; --fh-bg2: #ffffff; --fh-text: #2a1f45; --fh-muted: #6d6479; --fh-brand: #7b5cc4; --fh-card: rgba(255, 255, 255, .82); --fh-line: #e3d8f5; --fh-grad: linear-gradient(135deg, #8b6cd0, #d9709f); }
+@media (prefers-color-scheme: dark) {
+  :root { --fh-bg1: #14101f; --fh-bg2: #1c1530; --fh-text: #efe9f6; --fh-muted: #a99bbd; --fh-brand: #b48be0; --fh-card: rgba(255, 255, 255, .06); --fh-line: rgba(182, 155, 230, .28); }
+}
+html { color-scheme: light dark; }
+body { font-family: "Plus Jakarta Sans", "Noto Sans TC", -apple-system, "PingFang TC", "Microsoft JhengHei", sans-serif; color: var(--fh-text); background: linear-gradient(180deg, var(--fh-bg1), var(--fh-bg2) 520px) no-repeat, var(--fh-bg2); min-height: 100vh; }
+h1, h2, h3, h4, h5, h6 { font-family: "Noto Serif TC", "Songti TC", "PMingLiU", serif; color: var(--fh-text); }
+p, li, td, th, label, span { color: inherit; }
+.section-title h2 { color: var(--fh-text); font-weight: 700; }
+.section-title h2::after { background: var(--fh-brand); }
+a { color: var(--fh-brand); }
+
+/* 浮動圓角標題列 */
+#header { top: 12px; left: 12px; right: 12px; width: auto; max-width: 1180px; margin: 0 auto; padding: 8px 6px; border-radius: 999px; background: rgba(255, 255, 255, .86); -webkit-backdrop-filter: blur(14px); backdrop-filter: blur(14px); box-shadow: 0 8px 28px rgba(95, 62, 160, .16); border: 1px solid var(--fh-line); color: #2a1f45; }
+#header.header-scrolled { top: 12px; }
+#header .container { max-width: none; padding: 0 14px; }
+#header img { height: 38px; width: auto; display: block; }
+#header .navbar a, #header .navbar a:focus { color: #4a3a7a; font-family: inherit; font-size: 14px; font-weight: 500; }
+#header .navbar a:hover, #header .navbar .active, #header .navbar .active:focus, #header .navbar li:hover > a { color: #7b5cc4; }
+#header .navbar a::before { background-color: #7b5cc4 !important; }
+#header .appointment-btn { background: var(--fh-grad); color: #fff; margin-left: 12px; padding: 8px 20px; }
+#header .mobile-nav-toggle { color: #4a3a7a; }
+#header .logo-d { display: none; }
+#header .navbar a::before { visibility: hidden; width: 0; }
+#header .navbar a:hover::before, #header .navbar .active::before { visibility: visible; width: 100%; }
+@media (prefers-color-scheme: dark) {
+  #header { background: rgba(30, 22, 50, .82); color: #efe9f6; }
+  #header .navbar a, #header .navbar a:focus, #header .mobile-nav-toggle { color: #d9ccf2; }
+  #header .navbar a:hover, #header .navbar .active { color: #fff; }
+  #header .logo-l { display: none; }
+  #header .logo-d { display: block; }
+}
+@media (max-width: 991px) {
+  #header { border-radius: 24px; }
+  .navbar-mobile ul { border-radius: 16px; }
+}
+
+/* 內容與頁尾 */
+.departments, .privacy { background: transparent; }
+#flight-history-text img, .departments .tab-content img { border-radius: 16px; }
+.btn, .departments .nav-link { font-family: inherit; }
+#footer { background: linear-gradient(180deg, #ece4fa, #d9cdf3) !important; color: #2a1f45; }
+#footer h3, #footer h4, #footer p, #footer strong, #footer a { color: #2a1f45 !important; }
+#footer .footer-top { background: transparent; }
+@media (prefers-color-scheme: dark) {
+  #footer { background: linear-gradient(180deg, #1c1530, #110d1c) !important; }
+  #footer h3, #footer h4, #footer p, #footer strong, #footer a { color: #d9ccf2 !important; }
+}
+.back-to-top { background: var(--fh-grad); }
+@media (max-width: 767px) {
+  #header .appointment-btn { padding: 6px 14px; margin: 0 8px 0 0; font-size: 13px; }
+  #header .appointment-btn span { display: inline !important; }
+}
