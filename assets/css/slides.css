@@ -525,3 +525,8 @@ html[data-theme="dark"] .tile::after { background: rgba(12, 8, 26, .7); }
   .top-links .pill { padding: 5px 10px; }
     .brand img { height: 26px; }
 }
+
+.a2hs { position: fixed; left: 12px; right: 12px; bottom: calc(12px + env(safe-area-inset-bottom)); z-index: 60; display: flex; align-items: center; gap: 12px; padding: 12px 14px; border-radius: 16px; background: rgba(255, 255, 255, .96); color: #2a1f45; border: 1px solid var(--violet-l, #d9ccf2); box-shadow: 0 10px 30px rgba(80, 50, 140, .25); font-size: 14px; line-height: 1.4; }
+.a2hs span { flex: 1; }
+.a2hs button { flex: none; border: 0; border-radius: 999px; padding: 8px 14px; font: inherit; font-weight: 600; color: #fff; background: var(--grad, #7b5cc4); cursor: pointer; }
+html[data-theme="dark"] .a2hs { background: rgba(30, 22, 50, .96); color: #efe9f6; border-color: rgba(182, 155, 230, .4); }

@@ -329,7 +329,16 @@
         say("已刪除。");
         loadAnnouncements();
       });
-      acts.appendChild(bEdit); acts.appendChild(bPub); acts.appendChild(bDel);
+      var bDup = el("button", "small", "複製"); bDup.type = "button";
+      bDup.addEventListener("click", function () {
+        editAnnouncement(a);
+        $("a_id").value = "";
+        $("a_title").value = (a.title || "") + "（複製）";
+        $("a_pub").checked = false; $("a_pubat").value = "";
+        $("a_formtitle").textContent = "新增公告（複製自舊公告，預設為草稿）";
+        say("已複製到上方表單，修改後按「儲存」就會新增一則。");
+      });
+      acts.appendChild(bEdit); acts.appendChild(bDup); acts.appendChild(bPub); acts.appendChild(bDel);
       row.appendChild(acts);
       box.appendChild(row);
     });
