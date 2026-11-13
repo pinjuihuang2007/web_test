@@ -16,7 +16,7 @@
     { "code": "en", "lang": "en", "permalink": "index-en.html", "href": "index-en.html" }
   ],
   "footerLinks": [
-    { "label": "Home", "href": "#" },
+    { "label": "Home", "href": "index.html" },
     { "label": "VATSIM", "href": "https://vatsim.net/" },
     { "label": "IVAO", "href": "https://ivao.aero/" }
   ],
