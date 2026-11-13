@@ -83,6 +83,9 @@
       "heading": "活動公告",
       "empty": "目前沒有活動公告，敬請期待。",
       "pinned": "置頂",
+      "all": "查看全部公告",
+      "allTitle": "全部公告",
+      "close": "關閉",
       "cd": { "prefix": "距離下一場活動還有", "d": "天", "h": "小時", "m": "分鐘", "soon": "即將開始", "ics": "加入行事曆" }
     },
     "live": {
@@ -265,6 +268,9 @@
       "heading": "Announcements",
       "empty": "No announcements right now. Stay tuned!",
       "pinned": "Pinned",
+      "all": "View all announcements",
+      "allTitle": "All announcements",
+      "close": "Close",
       "cd": { "prefix": "Next event in", "d": "d", "h": "h", "m": "min", "soon": "Starting soon", "ics": "Add to calendar" }
     },
     "live": {
