@@ -163,6 +163,12 @@
   var current = {};
   var db = null;
 
+  function timeout(p, ms, msg) {
+    return new Promise(function (ok, no) {
+      var t = setTimeout(function () { no(new Error(msg)); }, ms);
+      p.then(function (v) { clearTimeout(t); ok(v); }, function (e) { clearTimeout(t); no(e); });
+    });
+  }
   function say(text, bad) {
     var m = $("msg");
     m.textContent = text || "";
@@ -452,7 +458,13 @@
   $("login").addEventListener("submit", async function (e) {
     e.preventDefault();
     say("登入中…");
-    var r = await db.auth.signInWithPassword({ email: $("email").value.trim(), password: $("pw").value });
+    var r;
+    try {
+      r = await timeout(db.auth.signInWithPassword({ email: $("email").value.trim(), password: $("pw").value }), 15000, "登入逾時");
+    } catch (err) {
+      say("登入失敗：" + err.message + "。Supabase 可能被暫停了（到 Supabase 後台按 Restore project），或請關掉其他開著後台的分頁後重新整理再試。", true);
+      return;
+    }
     if (r.error) {
       var m = r.error.message || "";
       var hint = /invalid login/i.test(m) ? "Email 或密碼不正確（或這個帳號不存在）。"
@@ -462,7 +474,8 @@
       say("登入失敗：" + (hint || m) + (hint ? "" : "") + " [" + m + "]", true); return;
     }
     $("pw").value = "";
-    await enter(r.data.session);
+    try { await timeout(enter(r.data.session), 20000, "載入後台資料逾時"); }
+    catch (err) { say("登入成功，但載入失敗：" + err.message, true); }
   });
   $("logout").addEventListener("click", async function () {
     await db.auth.signOut();
@@ -472,8 +485,8 @@
 
   // 重新整理後，如果還有登入狀態就直接進入
   db.auth.getSession().then(function (r) {
-    if (r.data && r.data.session) enter(r.data.session);
-  });
+    if (r.data && r.data.session) enter(r.data.session).catch(function (err) { say("載入失敗：" + err.message, true); });
+  }).catch(function (err) { say("無法讀取登入狀態：" + err.message, true); });
 })();
 </script>
 </body>
