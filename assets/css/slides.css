@@ -561,3 +561,6 @@ dialog.ann-all { background: #fff; }
 h2 { font-weight: 700; }
 .stats b { font-family: "Plus Jakarta Sans", sans-serif; }
 .idcard .sub-line, .fb-title, .fb-meta, .fb-tabs button { font-family: ui-monospace, "SF Mono", Menlo, Consolas, monospace; }
+
+/* 鍵盤操作時的焦點外框（滑鼠點擊不會出現） */
+a:focus-visible, button:focus-visible, summary:focus-visible { outline: 3px solid #b48be0; outline-offset: 3px; border-radius: 6px; }

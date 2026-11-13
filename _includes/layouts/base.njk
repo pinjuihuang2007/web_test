@@ -22,6 +22,12 @@
   <meta name="twitter:card" content="summary_large_image">
   <meta name="twitter:image" content="{{ site.ogImage }}">
   <meta property="og:type" content="website">
+  <link rel="canonical" href="{{ site.url }}/{{ pageHref or '' }}">
+{%- if false %}
+  <link rel="alternate" hreflang="{{ 'en' if localeMeta.lang[:2] == 'zh' else 'zh-Hant' }}" href="{{ site.url }}/{{ languageHref }}">
+  <link rel="alternate" hreflang="{{ 'zh-Hant' if localeMeta.lang[:2] == 'zh' else 'en' }}" href="{{ site.url }}/{{ pageHref or '' }}">
+{%- endif %}
+  <script type="application/ld+json">{"@context":"https://schema.org","@type":"Organization","name":"{{ t.meta.siteName }}","url":"{{ site.url }}/","logo":"{{ site.url }}/assets/img/icon-512.png","sameAs":["{{ site.discordUrl }}","{{ site.facebookUrl }}"]}</script>
 
   <!-- Favicons -->
   <link href="assets/img/favicon.png" rel="icon">
