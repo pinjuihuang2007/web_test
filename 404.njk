@@ -1,0 +1,37 @@
+---
+permalink: 404.html
+eleventyExcludeFromCollections: true
+---
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <meta name="robots" content="noindex">
+  <title>找不到頁面 | 中華虛擬航空</title>
+  <link rel="icon" href="{{ site.url }}/assets/img/favicon.png">
+  <style>
+    :root { color-scheme: light dark; --bg1:#ece6fa; --bg2:#fbe9f1; --text:#2a1f45; --muted:#6d6479; --brand:#7b5cc4; --card:rgba(255,255,255,.85); }
+    @media (prefers-color-scheme: dark) { :root { --bg1:#14101f; --bg2:#241238; --text:#efe9f6; --muted:#a99bbd; --brand:#b48be0; --card:rgba(255,255,255,.07); } }
+    * { box-sizing: border-box; }
+    body { margin:0; min-height:100vh; min-height:100dvh; display:grid; place-items:center; padding:24px;
+      background:linear-gradient(160deg,var(--bg1),var(--bg2)); color:var(--text);
+      font-family:-apple-system,BlinkMacSystemFont,"Noto Sans TC","PingFang TC","Microsoft JhengHei",sans-serif; }
+    main { max-width:440px; text-align:center; padding:36px 28px; border-radius:24px; background:var(--card); backdrop-filter:blur(8px); -webkit-backdrop-filter:blur(8px); }
+    .code { font-size:64px; font-weight:800; letter-spacing:.04em; margin:0; color:var(--brand); line-height:1.1; }
+    h1 { font-size:22px; margin:8px 0 10px; }
+    p { color:var(--muted); line-height:1.7; margin:0 0 22px; }
+    a { display:inline-block; padding:11px 26px; border-radius:999px; background:var(--brand); color:#fff; text-decoration:none; font-weight:600; }
+    img { height:36px; margin-bottom:18px; }
+  </style>
+</head>
+<body>
+  <main>
+    <img src="{{ site.url }}/assets/img/logo-dark.png" alt="中華虛擬航空" onerror="this.remove()">
+    <p class="code">404</p>
+    <h1>這個航班找不到了</h1>
+    <p>你要找的頁面可能已經移動或不存在。<br>Page not found.</p>
+    <a href="{{ site.url }}/">回到首頁</a>
+  </main>
+</body>
+</html>

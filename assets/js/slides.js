@@ -17,6 +17,31 @@
     else if (mq.addListener) mq.addListener(apply);
   })();
 
+
+  // ---- 鍵盤換頁：↑↓、PageUp/PageDown、空白鍵、Home/End（輸入框、視窗開啟時不處理）----
+  document.addEventListener('keydown', function (e) {
+    if (e.defaultPrevented || e.altKey || e.ctrlKey || e.metaKey) return;
+    var t = e.target, tag = t && t.tagName;
+    if (tag === 'INPUT' || tag === 'TEXTAREA' || tag === 'SELECT' || tag === 'BUTTON' || (t && t.isContentEditable)) return;
+    if (document.querySelector('dialog[open]')) return;
+    var all = [].slice.call(document.querySelectorAll('.slide'));
+    if (!all.length) return;
+    var k = e.key, dir = 0, edge = null;
+    if (k === 'ArrowDown' || k === 'PageDown' || (k === ' ' && !e.shiftKey)) dir = 1;
+    else if (k === 'ArrowUp' || k === 'PageUp' || (k === ' ' && e.shiftKey)) dir = -1;
+    else if (k === 'Home') edge = 0;
+    else if (k === 'End') edge = all.length - 1;
+    else return;
+    var mid = window.innerHeight / 2, cur = 0;
+    all.forEach(function (s, i) { var r = s.getBoundingClientRect(); if (r.top <= mid) cur = i; });
+    // 高度超過一個畫面的頁面（例如手機的會員頁）：先正常捲動，捲到底才換頁
+    var r0 = all[cur].getBoundingClientRect();
+    if (edge === null && ((dir > 0 && r0.bottom > window.innerHeight + 8) || (dir < 0 && r0.top < -8))) return;
+    var next = edge !== null ? edge : Math.max(0, Math.min(all.length - 1, cur + dir));
+    e.preventDefault();
+    all[next].scrollIntoView({ behavior: 'smooth', block: 'start' });
+  });
+
   var slides = [].slice.call(document.querySelectorAll('.slide'));
   var dots = [].slice.call(document.querySelectorAll('.dots a'));
 
