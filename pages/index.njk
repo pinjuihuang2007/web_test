@@ -14,6 +14,7 @@ eleventyComputed:
   <header class="top">
     <a class="brand" href="#hero"><img class="logo-l" src="assets/img/logo-dark.png" alt="{{ t.meta.siteName }}"><img class="logo-d" src="assets/img/logo-light.png" alt="" aria-hidden="true"></a>
     <nav class="top-links">
+      <a href="{{ fleetHref }}">{{ t.nav.fleet }}</a>
       {%- if flightHistoryHref %}
       <a href="{{ flightHistoryHref }}">{{ t.nav.flightHistory }}</a>
       {%- endif %}
@@ -101,6 +102,7 @@ eleventyComputed:
           <span class="fb-title"><i class="fb-led"></i>LIVE · TAIWAN</span>
           <span class="fb-meta"><span class="fb-clock" id="fb-clock" aria-hidden="true"></span><span id="live-updated" data-label="{{ t.live.updated }}"></span><span id="fb-page"></span></span>
         </div>
+        <div class="fb-wx" id="fb-wx" data-atis="{{ t.live.atisLabel }}" hidden aria-label="{{ t.live.wx }}"></div>
         <div class="fb-labels" id="fb-labels" aria-hidden="true"
              data-st="{{ t.live.cols.status }}" data-cs="{{ t.live.cols.callsign }}" data-ty="{{ t.live.cols.type }}"
              data-fr="{{ t.live.cols.from }}" data-to="{{ t.live.cols.to }}" data-fl="FL" data-gs="GS"></div>

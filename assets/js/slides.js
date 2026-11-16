@@ -268,15 +268,58 @@
             flights: (data.pilots || []).filter(twPlan).sort(byCs),
             pre: (data.prefiles || []).filter(twPlan).sort(byCs),
             // 台灣管制席位：呼號以 RC 開頭，且不是觀察員（facility 0）
+            atis: (data.atis || []).filter(function (a) { return /^RC/.test(String(a.callsign)); }),
             atc: (data.controllers || []).filter(function (c) { return /^RC/.test(String(c.callsign)) && Number(c.facility) > 0; })
                    .sort(byCs)
           };
           render(lastData);
+          renderWx();
           if (updated) updated.textContent = updated.getAttribute('data-label') + ' ' + new Date().toLocaleTimeString();
         })
         .catch(function () { message(liveBody.getAttribute('data-error')); })
         .then(function () { loading = false; });
     };
+
+
+    // ---- 機場氣象（METAR，來自 aviationweather.gov）與 ATIS（來自 VATSIM 資料）----
+    // 抓不到（網路或跨網域限制）時，整列自動隱藏，不影響看板。
+    var wxEl = document.getElementById('fb-wx'), wxData = null;
+    var WX = ['RCTP', 'RCSS', 'RCKH', 'RCMQ'];
+    var catColor = { VFR: '#2fa86b', MVFR: '#3b82f6', IFR: '#e0443e', LIFR: '#c026d3' };
+    var renderWx = function () {
+      if (!wxEl) return;
+      if (!wxData || !wxData.length) { wxEl.hidden = true; return; }
+      wxEl.textContent = '';
+      var atis = (lastData && lastData.atis) || [];
+      wxData.forEach(function (m) {
+        var chip = document.createElement('span'); chip.className = 'wx';
+        chip.title = m.rawOb || '';
+        var dot = document.createElement('i'); dot.className = 'wx-dot';
+        dot.style.background = catColor[m.fltCat] || '#999';
+        var w = (m.wdir === 'VRB' ? 'VRB' : (m.wdir != null ? String(Math.round(m.wdir)).padStart(3, '0') + '°' : '---')) + '/' + (m.wspd != null ? Math.round(m.wspd) : '-') + 'kt' + (m.wgst ? 'G' + Math.round(m.wgst) : '');
+        var parts = [m.icaoId, w, (m.temp != null ? Math.round(m.temp) + '°' : ''), (m.altim ? 'Q' + Math.round(m.altim) : '')];
+        var txt = document.createElement('span'); txt.textContent = parts.filter(Boolean).join(' ');
+        chip.appendChild(dot); chip.appendChild(txt);
+        var a = atis.filter(function (x) { return String(x.callsign).indexOf(m.icaoId) === 0; })[0];
+        if (a && a.atis_code) {
+          var b = document.createElement('b'); b.className = 'wx-atis';
+          b.textContent = wxEl.getAttribute('data-atis') + ' ' + a.atis_code; chip.appendChild(b);
+        }
+        wxEl.appendChild(chip);
+      });
+      wxEl.hidden = false;
+    };
+    var loadWx = function () {
+      if (!wxEl || document.hidden) return;
+      fetch('https://aviationweather.gov/api/data/metar?format=json&ids=' + WX.join(','))
+        .then(function (r) { if (!r.ok) throw new Error('http'); return r.json(); })
+        .then(function (list) {
+          wxData = WX.map(function (id) { return (list || []).filter(function (m) { return m.icaoId === id; })[0]; }).filter(Boolean);
+          renderWx();
+        })
+        .catch(function () { /* 靜默：沒有氣象資料就不顯示 */ });
+    };
+    loadWx(); setInterval(loadWx, 10 * 60 * 1000);
 
     var start = function () { refresh(); if (!timer) timer = setInterval(refresh, 60000); };
     var stop = function () { if (timer) { clearInterval(timer); timer = null; } };

@@ -564,3 +564,14 @@ h2 { font-weight: 700; }
 
 /* 鍵盤操作時的焦點外框（滑鼠點擊不會出現） */
 a:focus-visible, button:focus-visible, summary:focus-visible { outline: 3px solid #b48be0; outline-offset: 3px; border-radius: 6px; }
+
+/* 機場氣象列 */
+.fb-wx { display: flex; gap: 6px; overflow-x: auto; margin: 0; padding: 10px 18px 0; scrollbar-width: none; }
+.fb-wx::-webkit-scrollbar { display: none; }
+.fb-wx[hidden] { display: none; }
+.fb-wx .wx { flex: none; display: inline-flex; align-items: center; gap: 6px; font: 700 11px/1 ui-monospace, "SF Mono", Menlo, Consolas, monospace; letter-spacing: .03em; color: var(--ink); background: #fff; border-radius: 6px; padding: 5px 8px; box-shadow: 0 1px 2px rgba(95, 69, 163, .25); white-space: nowrap; }
+.fb-wx .wx-dot { width: 8px; height: 8px; border-radius: 50%; display: inline-block; }
+.fb-wx .wx-atis { color: var(--plum); }
+html[data-theme="dark"] .fb-wx .wx { background: rgba(255, 255, 255, .1); color: #f1edfb; box-shadow: none; }
+html[data-theme="dark"] .fb-wx .wx-atis { color: #ffd479; }
+@media (max-width: 700px) { .fb-wx { padding: 8px 12px 0; } .fb-wx .wx { font-size: 10px; padding: 4px 6px; } }
