@@ -41,7 +41,13 @@ jobs:
           echo "== 首頁連結（相對連結是否存在）=="
           curl -s -L -m 30 "$SITE/" -o home.html || true
           for ref in $(grep -oE '(href|src)="(assets/[^"#?]+)' home.html | sed -E 's/^(href|src)="//' | sort -u); do
-            check "$SITE/$ref"
+            case "$ref" in
+              assets/video/*)
+                # 首頁影片檔還沒放進來時，網站會自動改用 YouTube，所以只提醒、不算失敗
+                code=$(curl -s -o /dev/null -L -m 30 -w "%{http_code}" "$SITE/$ref" || echo 000)
+                if [ "$code" = "200" ]; then echo "OK   $code $SITE/$ref"; else echo "WARN $code $SITE/$ref（影片檔不存在，目前使用 YouTube 備援）"; fi ;;
+              *) check "$SITE/$ref" ;;
+            esac
           done
 
           echo "== Supabase =="
