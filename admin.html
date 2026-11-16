@@ -83,11 +83,18 @@
     <div class="tabs" role="tablist">
       <button type="button" role="tab" id="tab-ann" aria-selected="true">活動公告</button>
       <button type="button" role="tab" id="tab-site" aria-selected="false">首頁文字與圖片</button>
+      <button type="button" role="tab" id="tab-admins" aria-selected="false" hidden>管理員</button>
+      <button type="button" role="tab" id="tab-log" aria-selected="false" hidden>操作紀錄</button>
       <a class="link" href="index.html" target="_blank" rel="noopener" style="margin-left:auto">開啟網站預覽</a>
     </div>
 
     <!-- 活動公告 -->
     <div id="panel-ann">
+      <div class="card" id="draft-bar" hidden>
+        <span id="draft-text"></span>
+        <button type="button" class="small" id="draft-restore">恢復草稿</button>
+        <button type="button" class="small" id="draft-drop">捨棄</button>
+      </div>
       <div class="card">
         <h2 id="a_formtitle">新增公告</h2>
         <input type="hidden" id="a_id">
@@ -139,6 +146,30 @@
         <button id="save" class="primary" type="button">儲存全部變更</button>
       </div>
       <p class="hint">留空的欄位會顯示網站原本的預設內容（公告標籤留空則不顯示）。這些文字只會套用在中文版首頁。</p>
+    </div>
+
+    <!-- 管理員（僅站長） -->
+    <div id="panel-admins" hidden>
+      <div class="card">
+        <h2>管理員名單</h2>
+        <p class="hint">站長（owner）可以修改所有內容；編輯（editor）只能管理公告與上傳圖片，不能改首頁文字。新增前，對方要先在 Supabase 的 Authentication → Users 建立帳號。</p>
+        <div id="ad_list"></div>
+        <div class="row2" style="margin-top:14px">
+          <div class="field"><label for="ad_email">新增管理員的 Email</label><input id="ad_email" type="email" placeholder="name@example.com"></div>
+          <div class="field"><label for="ad_role">角色</label><select id="ad_role"><option value="editor">editor（編輯）</option><option value="owner">owner（站長）</option></select></div>
+        </div>
+        <div class="actions"><button id="ad_add" class="primary" type="button">新增管理員</button></div>
+      </div>
+    </div>
+
+    <!-- 操作紀錄（僅站長） -->
+    <div id="panel-log" hidden>
+      <div class="card">
+        <h2>操作紀錄</h2>
+        <p class="hint">最近 100 筆。公告、首頁文字、管理員名單的每次新增、修改、刪除都會自動記錄。</p>
+        <div class="actions"><button id="log_refresh" type="button">重新整理</button></div>
+        <div id="log_list"></div>
+      </div>
     </div>
   </section>
 </main>
@@ -214,6 +245,7 @@
     say("圖片已上傳，記得按「儲存」才會套用到網站。");
   }
 
+  var myId = null, myRole = "owner";
   async function enter(session) {
     var res = await db.from("admins").select("user_id").eq("user_id", session.user.id).maybeSingle();
     if (res.error || !res.data) {
@@ -223,6 +255,15 @@
       return;
     }
     $("who").textContent = session.user.email;
+    myId = session.user.id;
+    // 角色：尚未執行新版 setup.sql（沒有 role 欄位）時，一律當作 owner（伺服器端仍會檢查權限）
+    var rr = await db.from("admins").select("role").eq("user_id", myId).maybeSingle();
+    myRole = (!rr.error && rr.data && rr.data.role) ? rr.data.role : "owner";
+    $("who").textContent = session.user.email + (myRole === "editor" ? "（編輯）" : "");
+    $("tab-site").hidden = myRole === "editor";
+    $("tab-admins").hidden = myRole !== "owner";
+    $("tab-log").hidden = myRole !== "owner";
+    selectTab("ann");
     var c = await db.from("site_content").select("key,value");
     if (c.error) { say("讀取失敗：" + c.error.message, true); return; }
     current = {};
@@ -230,18 +271,24 @@
     renderFields();
     await loadAnnouncements();
     show(true);
+    checkDraft();
     say("");
   }
 
   /* ------------------------- 分頁切換 ------------------------- */
+  var TABS = ["ann", "site", "admins", "log"];
   function selectTab(which) {
-    $("tab-ann").setAttribute("aria-selected", which === "ann" ? "true" : "false");
-    $("tab-site").setAttribute("aria-selected", which === "site" ? "true" : "false");
-    $("panel-ann").hidden = which !== "ann";
-    $("panel-site").hidden = which !== "site";
+    TABS.forEach(function (t) {
+      $("tab-" + t).setAttribute("aria-selected", t === which ? "true" : "false");
+      $("panel-" + t).hidden = t !== which;
+    });
+    if (which === "admins") loadAdmins();
+    if (which === "log") loadLog();
   }
   $("tab-ann").addEventListener("click", function () { selectTab("ann"); });
   $("tab-site").addEventListener("click", function () { selectTab("site"); });
+  $("tab-admins").addEventListener("click", function () { selectTab("admins"); });
+  $("tab-log").addEventListener("click", function () { selectTab("log"); });
 
   /* ------------------------- 活動公告 ------------------------- */
   var announcements = [];
@@ -348,7 +395,7 @@
     var f = $("a_file").files[0];
     if (f) uploadImage("announcement", f, $("a_image"), $("a_preview"), $("a_file"));
   });
-  $("a_cancel").addEventListener("click", function () { clearForm(); say(""); });
+  $("a_cancel").addEventListener("click", function () { clearForm(); clearDraft(); say(""); });
 
   $("a_save").addEventListener("click", async function () {
     var title = $("a_title").value.trim();
@@ -379,6 +426,7 @@
     btn.disabled = false;
     if (r.error) { say("儲存失敗：" + r.error.message, true); return; }
     say(id ? "公告已更新。" : "公告已新增。");
+    clearDraft();
     clearForm();
     loadAnnouncements();
   });
@@ -464,6 +512,99 @@
   });
 
   /* ------------------------- 登入 / 登出 ------------------------- */
+
+  /* ------------------------- 管理員名單（站長） ------------------------- */
+  async function loadAdmins() {
+    var box = $("ad_list"); box.textContent = "載入中…";
+    var r = await db.from("admins").select("user_id,email,role,created_at").order("created_at");
+    box.textContent = "";
+    if (r.error) { box.appendChild(el("p", "hint", "讀取失敗：" + r.error.message + "（請先在 Supabase 執行最新的 supabase/setup.sql）")); return; }
+    r.data.forEach(function (a) {
+      var row = el("div", "item");
+      var info = el("div", "t");
+      info.appendChild(el("b", "", a.email || a.user_id));
+      info.appendChild(el("span", "meta", a.role === "owner" ? "站長 owner" : "編輯 editor"));
+      var acts = el("div", "row");
+      if (a.user_id !== myId) {
+        var bRole = el("button", "small", a.role === "owner" ? "改為編輯" : "改為站長"); bRole.type = "button";
+        bRole.addEventListener("click", async function () {
+          var x = await db.rpc("add_admin", { p_email: a.email, p_role: a.role === "owner" ? "editor" : "owner" });
+          if (x.error) say("失敗：" + x.error.message, true); else { say("已更新角色。"); loadAdmins(); }
+        });
+        var bDel = el("button", "small danger", "移除"); bDel.type = "button";
+        bDel.addEventListener("click", async function () {
+          if (!confirm("確定要移除 " + (a.email || "這位管理員") + " 嗎？")) return;
+          var x = await db.rpc("remove_admin", { p_user: a.user_id });
+          if (x.error) say("失敗：" + x.error.message, true); else { say("已移除。"); loadAdmins(); }
+        });
+        acts.appendChild(bRole); acts.appendChild(bDel);
+      } else { acts.appendChild(el("span", "meta", "（你自己）")); }
+      row.appendChild(info); row.appendChild(acts); box.appendChild(row);
+    });
+  }
+  $("ad_add").addEventListener("click", async function () {
+    var email = $("ad_email").value.trim();
+    if (!email) { say("請輸入 Email。", true); return; }
+    var x = await db.rpc("add_admin", { p_email: email, p_role: $("ad_role").value });
+    if (x.error) { say("新增失敗：" + x.error.message, true); return; }
+    $("ad_email").value = ""; say("已新增管理員。"); loadAdmins();
+  });
+
+  /* ------------------------- 操作紀錄（站長） ------------------------- */
+  var ACTS = { INSERT: "新增", UPDATE: "修改", DELETE: "刪除" }, TBLS = { announcements: "公告", site_content: "首頁文字", admins: "管理員" };
+  async function loadLog() {
+    var box = $("log_list"); box.textContent = "載入中…";
+    var r = await db.from("audit_log").select("at,email,table_name,action,summary").order("at", { ascending: false }).limit(100);
+    box.textContent = "";
+    if (r.error) { box.appendChild(el("p", "hint", "讀取失敗：" + r.error.message + "（請先在 Supabase 執行最新的 supabase/setup.sql）")); return; }
+    if (!r.data.length) { box.appendChild(el("p", "hint", "目前還沒有紀錄。")); return; }
+    r.data.forEach(function (x) {
+      var row = el("div", "item");
+      var d = tpe(x.at);
+      var info = el("div", "t");
+      info.appendChild(el("b", "", (ACTS[x.action] || x.action) + "｜" + (TBLS[x.table_name] || x.table_name) + (x.summary ? "：" + x.summary : "")));
+      info.appendChild(el("span", "meta", (d ? d.date + " " + d.time : x.at) + "　" + (x.email || "（系統）")));
+      row.appendChild(info); box.appendChild(row);
+    });
+  }
+  $("log_refresh").addEventListener("click", loadLog);
+
+  /* ------------------------- 公告草稿自動儲存 ------------------------- */
+  // 寫到一半不小心關掉頁面，下次打開可以恢復。只存在這個瀏覽器（localStorage），儲存或取消後會清掉。
+  var DRAFT_IDS = ["a_id", "a_title", "a_date", "a_time", "a_body", "a_image", "a_title_en", "a_body_en", "a_pubat"];
+  var draftKey = function () { return "calva_admin_draft_" + (myId || ""); };
+  function formHasContent() { return ["a_title", "a_body", "a_title_en", "a_body_en"].some(function (i) { return $(i).value.trim(); }); }
+  var draftTimer = null;
+  function saveDraft() {
+    try {
+      if (!formHasContent()) { localStorage.removeItem(draftKey()); return; }
+      var o = { t: Date.now(), pub: $("a_pub").checked, pin: $("a_pin").checked };
+      DRAFT_IDS.forEach(function (i) { o[i] = $(i).value; });
+      localStorage.setItem(draftKey(), JSON.stringify(o));
+    } catch (e) {}
+  }
+  function clearDraft() { try { localStorage.removeItem(draftKey()); } catch (e) {} $("draft-bar").hidden = true; }
+  function checkDraft() {
+    try {
+      var raw = localStorage.getItem(draftKey()); if (!raw || formHasContent()) return;
+      var o = JSON.parse(raw); if (!o || !o.t) return;
+      var d = new Date(o.t);
+      $("draft-text").textContent = "找到沒有儲存的公告草稿（" + (o.a_title || "未命名") + "，" + d.toLocaleString() + "）";
+      $("draft-bar").hidden = false;
+      $("draft-restore").onclick = function () {
+        DRAFT_IDS.forEach(function (i) { $(i).value = o[i] || ""; });
+        $("a_pub").checked = o.pub !== false; $("a_pin").checked = !!o.pin;
+        if (o.a_id) { $("a_formtitle").textContent = "編輯公告"; $("a_cancel").hidden = false; }
+        $("draft-bar").hidden = true; say("已恢復草稿，確認後按「儲存公告」。");
+      };
+      $("draft-drop").onclick = clearDraft;
+    } catch (e) {}
+  }
+  DRAFT_IDS.concat(["a_pub", "a_pin"]).forEach(function (i) {
+    $(i).addEventListener("input", function () { clearTimeout(draftTimer); draftTimer = setTimeout(saveDraft, 800); });
+    $(i).addEventListener("change", function () { clearTimeout(draftTimer); draftTimer = setTimeout(saveDraft, 800); });
+  });
+
   $("login").addEventListener("submit", async function (e) {
     e.preventDefault();
     say("登入中…");

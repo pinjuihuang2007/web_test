@@ -1,0 +1,61 @@
+name: Site health check
+
+# 每 6 小時檢查一次網站與 Supabase。任何一項失敗，這個工作會顯示失敗，
+# GitHub 會寄信通知（Settings → Notifications → Actions 要開啟）。也可以在 Actions 頁面手動執行。
+on:
+  schedule:
+    - cron: "17 */6 * * *"
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  health:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Check pages, assets and Supabase
+        run: |
+          set -u
+          fail=0
+          SITE="https://${GITHUB_REPOSITORY_OWNER}.github.io/${GITHUB_REPOSITORY#*/}"
+          check() {
+            code=$(curl -s -o /dev/null -L -m 30 -w "%{http_code}" "$1" || echo 000)
+            if [ "$code" = "200" ]; then echo "OK   $code $1"; else echo "FAIL $code $1"; fail=1; fi
+          }
+
+          echo "== 網站頁面與必要檔案 =="
+          for path in "" index-en.html fleet.html fleet-en.html manifest.webmanifest sw.js \
+                      assets/js/slides.js assets/js/content.js assets/css/slides.css assets/img/logo-dark.png \
+                      admin.html 404.html; do
+            check "$SITE/$path"
+          done
+
+          echo "== 聯飛紀錄頁（最新一場）=="
+          latest=$(python3 -c "import json;f=json.load(open('_data/flights.json'));print(sorted(f,key=lambda x:x['date'])[-1]['id'])")
+          check "$SITE/flight-history-$latest.html"
+
+          echo "== 首頁連結（相對連結是否存在）=="
+          curl -s -L -m 30 "$SITE/" -o home.html || true
+          for ref in $(grep -oE '(href|src)="(assets/[^"#?]+)' home.html | sed -E 's/^(href|src)="//' | sort -u); do
+            check "$SITE/$ref"
+          done
+
+          echo "== Supabase =="
+          URL=$(grep -oE 'url: *"[^"]+"' assets/js/site-config.js | head -1 | sed -E 's/.*"(.*)"/\1/')
+          KEY=$(grep -oE 'anonKey: *"[^"]+"' assets/js/site-config.js | head -1 | sed -E 's/.*"(.*)"/\1/')
+          for t in "site_content?select=key&limit=1" "announcements?select=id&limit=1"; do
+            code=$(curl -s -o /dev/null -m 30 -w "%{http_code}" "$URL/rest/v1/$t" -H "apikey: $KEY" -H "Authorization: Bearer $KEY" || echo 000)
+            if [ "$code" = "200" ]; then echo "OK   $code supabase/$t"; else echo "FAIL $code supabase/$t（專案可能被暫停，請到 Supabase 按 Restore project）"; fail=1; fi
+          done
+          code=$(curl -s -o /dev/null -m 30 -w "%{http_code}" "$URL/auth/v1/health" -H "apikey: $KEY" || echo 000)
+          if [ "$code" = "200" ]; then echo "OK   $code supabase/auth"; else echo "FAIL $code supabase/auth"; fail=1; fi
+
+          echo "== VATSIM 資料來源 =="
+          check "https://data.vatsim.net/v3/vatsim-data.json"
+
+          if [ "$fail" != "0" ]; then echo "有項目失敗，請看上面標示 FAIL 的行。"; exit 1; fi
+          echo "全部正常。"
