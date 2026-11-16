@@ -51,20 +51,20 @@
 
   <!-- 只用到 Discord / Facebook 等圖示，沿用站內既有的 boxicons -->
   <link href="assets/vendor/boxicons/css/boxicons.min.css" rel="stylesheet">
-  <link href="assets/css/slides.css" rel="stylesheet">
+  <link href="assets/css/slides.css?v={{ build.version }}" rel="stylesheet">
 </head>
 
 <body>
 
 {{ content | safe }}
 
-  <script defer src="assets/js/site-config.js"></script>
-  <script defer src="assets/js/flipboard.js"></script>
-  <script defer src="assets/js/slides.js"></script>
-  <script defer src="assets/js/content.js"></script>
-  <script defer src="assets/js/airports.js"></script>
-  <script defer src="assets/js/member.js"></script>
-  <script defer src="assets/js/pwa.js"></script>
+  <script defer src="assets/js/site-config.js?v={{ build.version }}"></script>
+  <script defer src="assets/js/flipboard.js?v={{ build.version }}"></script>
+  <script defer src="assets/js/slides.js?v={{ build.version }}"></script>
+  <script defer src="assets/js/content.js?v={{ build.version }}"></script>
+  <script defer src="assets/js/airports.js?v={{ build.version }}"></script>
+  <script defer src="assets/js/member.js?v={{ build.version }}"></script>
+  <script defer src="assets/js/pwa.js?v={{ build.version }}"></script>
 
 </body>
 
