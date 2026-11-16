@@ -12,6 +12,7 @@
           <li><a class="nav-link scrollto" href="{{ navPrefix }}#hiring">{{ t.nav.hiring }}</a></li>
           <li><a class="nav-link scrollto" href="{{ navPrefix }}#statistics">{{ t.nav.statistics }}</a></li>
           <li><a class="nav-link scrollto" href="{{ navPrefix }}#partners">{{ t.nav.partners }}</a></li>
+          <li><a class="nav-link scrollto{% if activeNav == 'fleet' %} active{% endif %}" href="{{ fleetHref }}">{{ t.nav.fleet }}</a></li>
           {% if flightHistoryHref %}<li><a class="nav-link scrollto{% if activeNav == 'flightHistory' %} active{% endif %}" href="{{ flightHistoryHref }}">{{ t.nav.flightHistory }}</a></li>
           {% endif %}<li><a class="nav-link scrollto" href="#privacy">{{ t.nav.privacy }}</a></li>
           <li><a class="nav-link scrollto" href="{{ languageHref }}">{{ t.nav.languageSwitch }}</a></li>

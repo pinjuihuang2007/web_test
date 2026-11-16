@@ -1,0 +1,167 @@
+[
+  {
+    "code": "A359",
+    "name": "Airbus A350-900",
+    "role": {
+      "zh-TW": "長程主力旗艦",
+      "en": "Long-haul flagship"
+    },
+    "seats": "306",
+    "range": "8,100 nm",
+    "cruise": 480,
+    "simbrief": "A359",
+    "liveries": [
+      {
+        "name": {
+          "zh-TW": "標準塗裝",
+          "en": "Standard"
+        },
+        "body": "#ffffff",
+        "tail": "#d9709f",
+        "stripe": "#2b3f8f"
+      },
+      {
+        "name": {
+          "zh-TW": "梅花塗裝",
+          "en": "Plum Blossom"
+        },
+        "body": "#f6e6ee",
+        "tail": "#c73a72",
+        "stripe": "#7b5cc4"
+      }
+    ]
+  },
+  {
+    "code": "B77W",
+    "name": "Boeing 777-300ER",
+    "role": {
+      "zh-TW": "跨洋長程",
+      "en": "Transpacific long-haul"
+    },
+    "seats": "358",
+    "range": "7,370 nm",
+    "cruise": 480,
+    "simbrief": "B77W",
+    "liveries": [
+      {
+        "name": {
+          "zh-TW": "標準塗裝",
+          "en": "Standard"
+        },
+        "body": "#ffffff",
+        "tail": "#d9709f",
+        "stripe": "#2b3f8f"
+      }
+    ]
+  },
+  {
+    "code": "A333",
+    "name": "Airbus A330-300",
+    "role": {
+      "zh-TW": "中程幹線",
+      "en": "Regional trunk"
+    },
+    "seats": "277",
+    "range": "6,350 nm",
+    "cruise": 470,
+    "simbrief": "A333",
+    "liveries": [
+      {
+        "name": {
+          "zh-TW": "標準塗裝",
+          "en": "Standard"
+        },
+        "body": "#ffffff",
+        "tail": "#d9709f",
+        "stripe": "#2b3f8f"
+      },
+      {
+        "name": {
+          "zh-TW": "紫色彩繪",
+          "en": "Purple special"
+        },
+        "body": "#e9defa",
+        "tail": "#7b5cc4",
+        "stripe": "#d9709f"
+      }
+    ]
+  },
+  {
+    "code": "A21N",
+    "name": "Airbus A321neo",
+    "role": {
+      "zh-TW": "東亞與東南亞",
+      "en": "East & Southeast Asia"
+    },
+    "seats": "180",
+    "range": "3,500 nm",
+    "cruise": 450,
+    "simbrief": "A21N",
+    "liveries": [
+      {
+        "name": {
+          "zh-TW": "標準塗裝",
+          "en": "Standard"
+        },
+        "body": "#ffffff",
+        "tail": "#d9709f",
+        "stripe": "#2b3f8f"
+      }
+    ]
+  },
+  {
+    "code": "B738",
+    "name": "Boeing 737-800",
+    "role": {
+      "zh-TW": "短程與離島",
+      "en": "Short-haul & outer islands"
+    },
+    "seats": "162",
+    "range": "2,935 nm",
+    "cruise": 450,
+    "simbrief": "B738",
+    "liveries": [
+      {
+        "name": {
+          "zh-TW": "標準塗裝",
+          "en": "Standard"
+        },
+        "body": "#ffffff",
+        "tail": "#d9709f",
+        "stripe": "#2b3f8f"
+      },
+      {
+        "name": {
+          "zh-TW": "經典塗裝",
+          "en": "Classic"
+        },
+        "body": "#f4f1fa",
+        "tail": "#2b3f8f",
+        "stripe": "#c73a72"
+      }
+    ]
+  },
+  {
+    "code": "B77L",
+    "name": "Boeing 777F",
+    "role": {
+      "zh-TW": "貨運",
+      "en": "Freighter"
+    },
+    "seats": "—",
+    "range": "4,970 nm",
+    "cruise": 490,
+    "simbrief": "B77L",
+    "liveries": [
+      {
+        "name": {
+          "zh-TW": "貨機塗裝",
+          "en": "Cargo"
+        },
+        "body": "#ffffff",
+        "tail": "#d9709f",
+        "stripe": "#7b5cc4"
+      }
+    ]
+  }
+]

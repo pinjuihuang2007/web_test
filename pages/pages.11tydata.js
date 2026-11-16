@@ -11,6 +11,7 @@ module.exports = {
       );
       return other ? other.href : "index.html";
     },
+    fleetHref: (data) => (data.localeCode === "en" ? "fleet-en.html" : "fleet.html"),
     flightHistoryHref: (data) => {
       if (data.localeCode !== "zh-TW" || !data.flightData.latest) {
         return false;

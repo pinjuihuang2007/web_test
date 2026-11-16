@@ -1,0 +1,102 @@
+---
+layout: layouts/base.njk
+pagination:
+  data: site.locales
+  size: 1
+  alias: pageLocale
+permalink: "fleet{% if pageLocale.code == 'en' %}-en{% endif %}.html"
+navPrefix: "index.html"
+activeNav: fleet
+privacyPaddingTop: 100px
+eleventyComputed:
+  pageTitle: "{{ i18n[pageLocale.code].fleet.title }} | {{ i18n[pageLocale.code].meta.title }}"
+  pageDescription: "{{ i18n[pageLocale.code].fleet.description }}"
+  pageHref: "fleet{% if pageLocale.code == 'en' %}-en{% endif %}.html"
+  languageHref: "fleet{% if pageLocale.code == 'en' %}{% else %}-en{% endif %}.html"
+---
+{% macro plane(l) %}<svg class="plane" viewBox="0 0 240 80" aria-hidden="true" style="--body:{{ l.body }};--tail:{{ l.tail }};--stripe:{{ l.stripe }}"><path class="p-tail" d="M30 40 L12 6 L36 6 L60 38 Z"/><path class="p-wing" d="M108 46 L152 46 L130 76 L112 76 Z"/><path class="p-body" d="M14 40 C14 30 40 28 80 28 L200 28 C222 28 236 36 238 42 C236 48 222 52 200 52 L60 52 C30 52 14 48 14 40 Z"/><rect class="p-stripe" x="44" y="41" width="168" height="4"/><ellipse class="p-eng" cx="130" cy="58" rx="13" ry="6"/></svg>{% endmacro %}
+<main class="fleet-page">
+  <section id="fleet" class="fleet-sec" style="padding-top: 120px">
+    <div class="container">
+      <div class="section-title">
+        <h2>{{ t.fleet.heading }}</h2>
+        <p>{{ t.fleet.intro }}</p>
+      </div>
+
+      <h3 class="fleet-h3">{{ t.fleet.fleetHeading }}</h3>
+      <div class="fleet-grid">
+        {%- for f in fleet %}
+        <article class="fleet-card">
+          <header>
+            <span class="code">{{ f.code }}</span>
+            <h4>{{ f.name }}</h4>
+            <p class="role">{{ f.role[localeCode] }}</p>
+          </header>
+          <dl class="spec">
+            <div><dt>{{ t.fleet.seats }}</dt><dd>{{ f.seats }}</dd></div>
+            <div><dt>{{ t.fleet.range }}</dt><dd>{{ f.range }}</dd></div>
+            <div><dt>{{ t.fleet.cruise }}</dt><dd>{{ f.cruise }} {{ t.fleet.kt }}</dd></div>
+          </dl>
+          <p class="lv-h">{{ t.fleet.liveries }}</p>
+          <ul class="lv">
+            {%- for l in f.liveries %}
+            <li>{{ plane(l) }}<span>{{ l.name[localeCode] }}</span></li>
+            {%- endfor %}
+          </ul>
+        </article>
+        {%- endfor %}
+      </div>
+
+      <h3 class="fleet-h3" id="route-map-h">{{ t.fleet.mapHeading }}</h3>
+      <p class="fleet-sub">{{ t.fleet.mapIntro }}</p>
+      <div class="rm-filters" id="rm-filters" role="group" aria-label="{{ t.fleet.types }}"></div>
+      <div id="route-map" class="route-map-big" data-all="{{ t.fleet.allTypes }}" data-count="{{ t.fleet.routesCount }}"
+           data-distance="{{ t.fleet.distance }}" data-time="{{ t.fleet.time }}" data-types="{{ t.fleet.types }}"
+           data-h="{{ t.fleet.hours }}" data-m="{{ t.fleet.min }}"></div>
+      <p class="rm-count" id="rm-count"></p>
+
+      <h3 class="fleet-h3">{{ t.fleet.toolsHeading }}</h3>
+      <div class="tools-grid">
+        <section class="tool" id="planner" aria-labelledby="planner-h"
+                 data-unknown="{{ t.fleet.unknown }}" data-same="{{ t.fleet.same }}" data-h="{{ t.fleet.hours }}" data-m="{{ t.fleet.min }}">
+          <h4 id="planner-h">{{ t.fleet.plannerHeading }}</h4>
+          <form id="planner-form" autocomplete="off">
+            <label>{{ t.fleet.from }}<input id="pl-from" list="apt-list" maxlength="4" value="RCTP" required></label>
+            <label>{{ t.fleet.to }}<input id="pl-to" list="apt-list" maxlength="4" value="RJTT" required></label>
+            <label>{{ t.fleet.aircraft }}
+              <select id="pl-type">
+                {%- for f in fleet %}<option value="{{ f.simbrief }}" data-kt="{{ f.cruise }}">{{ f.code }} · {{ f.name }}</option>{%- endfor %}
+              </select>
+            </label>
+            <button type="submit">{{ t.fleet.calc }}</button>
+          </form>
+          <datalist id="apt-list"></datalist>
+          <div class="result" id="pl-result" aria-live="polite" data-dist="{{ t.fleet.pdist }}" data-time="{{ t.fleet.ptime }}" data-sb="{{ t.fleet.simbrief }}"></div>
+          <p class="note">{{ t.fleet.note }}</p>
+        </section>
+
+        <section class="tool" id="tz" aria-labelledby="tz-h" data-local="{{ t.fleet.local }}">
+          <h4 id="tz-h">{{ t.fleet.tzHeading }}</h4>
+          <p class="note">{{ t.fleet.tzIntro }}</p>
+          <form id="tz-form" autocomplete="off">
+            <label>{{ t.fleet.date }}<input type="date" id="tz-date" required></label>
+            <label>{{ t.fleet.clock }}<input type="time" id="tz-time" required></label>
+            <label>{{ t.fleet.inZone }}
+              <select id="tz-zone">
+                <option value="Asia/Taipei">{{ t.fleet.taiwan }} (UTC+8)</option>
+                <option value="UTC">UTC / Zulu</option>
+                <option value="local">{{ t.fleet.local }}</option>
+              </select>
+            </label>
+            <button type="button" id="tz-now">{{ t.fleet.useNow }}</button>
+          </form>
+          <table class="tz-table"><thead><tr><th>{{ t.fleet.zone }}</th><th>{{ t.fleet.localTime }}</th></tr></thead><tbody id="tz-body"></tbody></table>
+        </section>
+      </div>
+    </div>
+  </section>
+</main>
+
+<script type="application/json" id="routes-data">{{ routes | dump | safe }}</script>
+<script defer src="assets/js/airports.js"></script>
+<script defer src="assets/js/fleet.js"></script>

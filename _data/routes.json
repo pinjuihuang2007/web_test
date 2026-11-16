@@ -1,0 +1,430 @@
+[
+ {
+  "from": "RCTP",
+  "to": "RJTT",
+  "types": [
+   "A21N",
+   "A333",
+   "B738"
+  ]
+ },
+ {
+  "from": "RCTP",
+  "to": "RJAA",
+  "types": [
+   "A21N",
+   "A333",
+   "B738"
+  ]
+ },
+ {
+  "from": "RCTP",
+  "to": "RJBB",
+  "types": [
+   "A21N",
+   "A333",
+   "B738"
+  ]
+ },
+ {
+  "from": "RCTP",
+  "to": "RJOO",
+  "types": [
+   "A21N",
+   "A333",
+   "B738"
+  ]
+ },
+ {
+  "from": "RCTP",
+  "to": "RJGG",
+  "types": [
+   "A21N",
+   "A333",
+   "B738"
+  ]
+ },
+ {
+  "from": "RCTP",
+  "to": "RJFF",
+  "types": [
+   "A21N",
+   "A333",
+   "B738"
+  ]
+ },
+ {
+  "from": "RCTP",
+  "to": "RJCC",
+  "types": [
+   "A21N",
+   "A333",
+   "B738"
+  ]
+ },
+ {
+  "from": "RCTP",
+  "to": "ROAH",
+  "types": [
+   "A21N",
+   "A333",
+   "B738"
+  ]
+ },
+ {
+  "from": "RCTP",
+  "to": "RKSI",
+  "types": [
+   "A21N",
+   "A333",
+   "B738"
+  ]
+ },
+ {
+  "from": "RCTP",
+  "to": "RKPK",
+  "types": [
+   "A21N",
+   "A333",
+   "B738"
+  ]
+ },
+ {
+  "from": "RCTP",
+  "to": "VHHH",
+  "types": [
+   "A21N",
+   "A333",
+   "B738"
+  ]
+ },
+ {
+  "from": "RCTP",
+  "to": "VMMC",
+  "types": [
+   "A21N",
+   "A333",
+   "B738"
+  ]
+ },
+ {
+  "from": "RCTP",
+  "to": "ZSPD",
+  "types": [
+   "A21N",
+   "A333",
+   "B738"
+  ]
+ },
+ {
+  "from": "RCTP",
+  "to": "ZGGG",
+  "types": [
+   "A21N",
+   "A333",
+   "B738"
+  ]
+ },
+ {
+  "from": "RCTP",
+  "to": "ZBAA",
+  "types": [
+   "A21N",
+   "A333",
+   "B738"
+  ]
+ },
+ {
+  "from": "RCTP",
+  "to": "RPLL",
+  "types": [
+   "A21N",
+   "A333",
+   "B738"
+  ]
+ },
+ {
+  "from": "RCTP",
+  "to": "VTBS",
+  "types": [
+   "A21N",
+   "A333",
+   "B738"
+  ]
+ },
+ {
+  "from": "RCTP",
+  "to": "VVTS",
+  "types": [
+   "A21N",
+   "A333",
+   "B738"
+  ]
+ },
+ {
+  "from": "RCTP",
+  "to": "WSSS",
+  "types": [
+   "A21N",
+   "A333",
+   "B738"
+  ]
+ },
+ {
+  "from": "RCTP",
+  "to": "WMKK",
+  "types": [
+   "A21N",
+   "A333",
+   "B738"
+  ]
+ },
+ {
+  "from": "RCTP",
+  "to": "WIII",
+  "types": [
+   "A21N",
+   "A333",
+   "B738"
+  ]
+ },
+ {
+  "from": "RCTP",
+  "to": "KLAX",
+  "types": [
+   "A359",
+   "B77L",
+   "B77W"
+  ]
+ },
+ {
+  "from": "RCTP",
+  "to": "KSFO",
+  "types": [
+   "A359",
+   "B77W"
+  ]
+ },
+ {
+  "from": "RCTP",
+  "to": "KSEA",
+  "types": [
+   "A359",
+   "B77W"
+  ]
+ },
+ {
+  "from": "RCTP",
+  "to": "KJFK",
+  "types": [
+   "A359",
+   "B77W"
+  ]
+ },
+ {
+  "from": "RCTP",
+  "to": "KORD",
+  "types": [
+   "A359",
+   "B77W"
+  ]
+ },
+ {
+  "from": "RCTP",
+  "to": "CYVR",
+  "types": [
+   "A359",
+   "B77W"
+  ]
+ },
+ {
+  "from": "RCTP",
+  "to": "PHNL",
+  "types": [
+   "A359",
+   "B77W"
+  ]
+ },
+ {
+  "from": "RCTP",
+  "to": "EHAM",
+  "types": [
+   "A359",
+   "B77W"
+  ]
+ },
+ {
+  "from": "RCTP",
+  "to": "EDDF",
+  "types": [
+   "A359",
+   "B77W"
+  ]
+ },
+ {
+  "from": "RCTP",
+  "to": "EGLL",
+  "types": [
+   "A359",
+   "B77W"
+  ]
+ },
+ {
+  "from": "RCTP",
+  "to": "LOWW",
+  "types": [
+   "A359",
+   "B77W"
+  ]
+ },
+ {
+  "from": "RCTP",
+  "to": "LIRF",
+  "types": [
+   "A359",
+   "B77W"
+  ]
+ },
+ {
+  "from": "RCTP",
+  "to": "YSSY",
+  "types": [
+   "A359",
+   "A333"
+  ]
+ },
+ {
+  "from": "RCTP",
+  "to": "YBBN",
+  "types": [
+   "A359",
+   "A333"
+  ]
+ },
+ {
+  "from": "RCTP",
+  "to": "YMML",
+  "types": [
+   "A359",
+   "A333"
+  ]
+ },
+ {
+  "from": "RCTP",
+  "to": "PGUM",
+  "types": [
+   "A359",
+   "A333"
+  ]
+ },
+ {
+  "from": "RCTP",
+  "to": "VIDP",
+  "types": [
+   "A333",
+   "A359"
+  ]
+ },
+ {
+  "from": "RCTP",
+  "to": "OMDB",
+  "types": [
+   "A333",
+   "A359"
+  ]
+ },
+ {
+  "from": "RCSS",
+  "to": "RJTT",
+  "types": [
+   "A21N",
+   "B738"
+  ]
+ },
+ {
+  "from": "RCSS",
+  "to": "RKSS",
+  "types": [
+   "A21N",
+   "B738"
+  ]
+ },
+ {
+  "from": "RCSS",
+  "to": "ZSSS",
+  "types": [
+   "A21N",
+   "B738"
+  ]
+ },
+ {
+  "from": "RCSS",
+  "to": "VHHH",
+  "types": [
+   "A21N",
+   "B738"
+  ]
+ },
+ {
+  "from": "RCKH",
+  "to": "RJBB",
+  "types": [
+   "A21N",
+   "B738"
+  ]
+ },
+ {
+  "from": "RCKH",
+  "to": "RJFF",
+  "types": [
+   "A21N",
+   "B738"
+  ]
+ },
+ {
+  "from": "RCKH",
+  "to": "VHHH",
+  "types": [
+   "A21N",
+   "B738"
+  ]
+ },
+ {
+  "from": "RCKH",
+  "to": "VMMC",
+  "types": [
+   "A21N",
+   "B738"
+  ]
+ },
+ {
+  "from": "RCKH",
+  "to": "RPLL",
+  "types": [
+   "A21N",
+   "B738"
+  ]
+ },
+ {
+  "from": "RCKH",
+  "to": "VTBS",
+  "types": [
+   "A21N",
+   "B738"
+  ]
+ },
+ {
+  "from": "RCTP",
+  "to": "RCKH",
+  "types": [
+   "B738"
+  ]
+ },
+ {
+  "from": "RCTP",
+  "to": "RCMQ",
+  "types": [
+   "B738"
+  ]
+ }
+]

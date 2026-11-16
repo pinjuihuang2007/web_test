@@ -52,3 +52,54 @@ a { color: var(--fh-brand); }
   #header .appointment-btn { padding: 6px 14px; margin: 0 8px 0 0; font-size: 13px; }
   #header .appointment-btn span { display: inline !important; }
 }
+
+/* ===== 機隊與航線頁 ===== */
+.fleet-page .section-title p { color: var(--fh-muted); }
+.fleet-h3 { font-size: 24px; margin: 44px 0 14px; }
+.fleet-sub { color: var(--fh-muted); margin: -6px 0 14px; }
+.fleet-grid { display: grid; gap: 18px; grid-template-columns: repeat(auto-fill, minmax(290px, 1fr)); }
+.fleet-card { background: var(--fh-card); border: 1px solid var(--fh-line); border-radius: 20px; padding: 20px; box-shadow: 0 6px 22px rgba(95, 62, 160, .08); }
+.fleet-card header .code { display: inline-block; font: 700 11px/1 ui-monospace, Menlo, Consolas, monospace; letter-spacing: .12em; padding: 4px 8px; border-radius: 6px; background: var(--fh-grad); color: #fff; }
+.fleet-card h4 { font-size: 19px; margin: 10px 0 2px; }
+.fleet-card .role { color: var(--fh-muted); margin: 0 0 12px; font-size: 14px; }
+.spec { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; margin: 0 0 14px; }
+.spec div { background: rgba(123, 92, 196, .08); border-radius: 10px; padding: 8px 10px; }
+.spec dt { font-size: 11px; color: var(--fh-muted); font-weight: 500; }
+.spec dd { margin: 2px 0 0; font-weight: 700; font-size: 13px; }
+.lv-h { font-size: 12px; color: var(--fh-muted); margin: 0 0 6px; letter-spacing: .08em; }
+.lv { list-style: none; margin: 0; padding: 0; display: grid; gap: 10px; }
+.lv li { display: flex; align-items: center; gap: 12px; }
+.lv li span { font-size: 13px; }
+.plane { width: 96px; flex: none; }
+.plane .p-body { fill: var(--body); stroke: rgba(60, 40, 110, .35); stroke-width: 1.5; }
+.plane .p-tail { fill: var(--tail); }
+.plane .p-wing { fill: color-mix(in srgb, var(--body) 80%, #7b5cc4); stroke: rgba(60, 40, 110, .3); stroke-width: 1; }
+.plane .p-stripe { fill: var(--stripe); }
+.plane .p-eng { fill: #cfc7e0; stroke: rgba(60, 40, 110, .35); stroke-width: 1; }
+.rm-filters { display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: 12px; }
+.rm-filters button { font: inherit; font-size: 13px; padding: 6px 14px; border-radius: 999px; border: 1px solid var(--fh-line); background: var(--fh-card); color: var(--fh-text); cursor: pointer; }
+.rm-filters button[aria-pressed="true"] { background: var(--fh-grad); color: #fff; border-color: transparent; }
+.route-map-big { height: 480px; border-radius: 20px; border: 1px solid var(--fh-line); overflow: hidden; z-index: 0; }
+.rm-count { color: var(--fh-muted); font-size: 13px; margin: 8px 2px 0; }
+.tools-grid { display: grid; gap: 18px; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); }
+.tool { background: var(--fh-card); border: 1px solid var(--fh-line); border-radius: 20px; padding: 20px; }
+.tool h4 { font-size: 20px; margin: 0 0 12px; }
+.tool form { display: grid; gap: 10px; }
+.tool label { display: grid; gap: 4px; font-size: 13px; color: var(--fh-muted); }
+.tool input, .tool select { font: inherit; font-size: 15px; padding: 9px 12px; border-radius: 10px; border: 1px solid var(--fh-line); background: rgba(255, 255, 255, .7); color: var(--fh-text); width: 100%; }
+.tool button { font: inherit; font-weight: 600; padding: 10px 16px; border: 0; border-radius: 999px; color: #fff; background: var(--fh-grad); cursor: pointer; }
+.tool .note { font-size: 12.5px; color: var(--fh-muted); margin: 10px 0 0; }
+.tool .result { margin-top: 12px; display: grid; gap: 8px; }
+.tool .result div { display: flex; justify-content: space-between; gap: 12px; padding: 8px 12px; border-radius: 10px; background: rgba(123, 92, 196, .08); font-size: 14px; }
+.tool .result .err { color: #c73a72; margin: 0; }
+.tool .result .sb { display: inline-block; text-align: center; padding: 10px 16px; border-radius: 999px; background: var(--fh-grad); color: #fff; text-decoration: none; font-weight: 600; }
+.tz-table { width: 100%; margin-top: 12px; border-collapse: collapse; font-size: 14px; }
+.tz-table th, .tz-table td { padding: 7px 8px; border-bottom: 1px solid var(--fh-line); text-align: left; }
+.tz-table tr.hl td { font-weight: 700; color: var(--fh-brand); }
+@media (prefers-color-scheme: dark) {
+  .tool input, .tool select { background: rgba(255, 255, 255, .06); }
+  .plane .p-body { stroke: rgba(255, 255, 255, .3); }
+}
+@media (max-width: 600px) { .route-map-big { height: 380px; } .fleet-h3 { font-size: 21px; } }
+#header .navbar a, #header .navbar a:focus { border-bottom-color: transparent; }
+#header .navbar a:hover, #header .navbar .active, #header .navbar li:hover > a { border-bottom-color: #c73a72; }
