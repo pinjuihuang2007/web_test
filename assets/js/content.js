@@ -110,6 +110,28 @@
       p.textContent = text;
       body.appendChild(p);
     }
+    if (a.id) {
+      var list0 = document.getElementById('announcement-list');
+      var share = document.createElement('button');
+      share.type = 'button';
+      share.className = 'ann-share';
+      share.textContent = '🔗 ' + ((list0 && list0.getAttribute('data-share')) || 'Share');
+      share.addEventListener('click', function (e) {
+        e.stopPropagation();
+        var url = location.origin + location.pathname + '#ann-' + a.id;
+        var done = function () {
+          var old = share.textContent;
+          share.textContent = '✓ ' + ((list0 && list0.getAttribute('data-copied')) || 'Copied');
+          setTimeout(function () { share.textContent = old; }, 1800);
+        };
+        if (navigator.share) {
+          navigator.share({ title: title, url: url }).catch(function () {});
+        } else if (navigator.clipboard && navigator.clipboard.writeText) {
+          navigator.clipboard.writeText(url).then(done, function () { window.prompt('', url); });
+        } else { window.prompt('', url); }
+      });
+      body.appendChild(share);
+    }
     card.appendChild(body);
     return card;
   }
@@ -217,4 +239,10 @@
       });
     });
   }
+
+  // 公告分享連結（…#ann-<id>）：打開頁面時直接跳到那一則
+  window.addEventListener('load', function () {
+    var m = /^#ann-(.+)$/.exec(location.hash || '');
+    if (m && typeof openAll === 'function') setTimeout(function () { openAll(decodeURIComponent(m[1])); }, 600);
+  });
 })();

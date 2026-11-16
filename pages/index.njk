@@ -85,7 +85,7 @@ eleventyComputed:
         <span class="cd-label"></span><b class="cd-time"></b><span class="cd-title"></span>
         <button type="button" class="cd-ics">{{ t.announcements.cd.ics }}</button>
       </div>
-      <div id="announcement-list" class="ann-grid" data-pin="{{ t.announcements.pinned }}"></div>
+      <div id="announcement-list" class="ann-grid" data-pin="{{ t.announcements.pinned }}" data-share="{{ t.announcements.share }}" data-copied="{{ t.announcements.copied }}"></div>
       <p id="announcement-empty" class="empty">{{ t.announcements.empty }}</p>
       <p class="ann-more-wrap"><button type="button" id="ann-more" class="ann-more" hidden>{{ t.announcements.all }}</button></p>
     </div>

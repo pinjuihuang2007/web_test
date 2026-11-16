@@ -40,7 +40,7 @@ eleventyComputed:
           <p class="lv-h">{{ t.fleet.liveries }}</p>
           <ul class="lv">
             {%- for l in f.liveries %}
-            <li>{{ plane(l) }}<span>{{ l.name[localeCode] }}</span></li>
+            <li{% if l.image %} class="has-img"{% endif %}>{% if l.image %}<img src="{{ l.image }}" alt="{{ l.name[localeCode] }}" loading="lazy">{% else %}{{ plane(l) }}{% endif %}<span>{{ l.name[localeCode] }}</span></li>
             {%- endfor %}
           </ul>
         </article>
