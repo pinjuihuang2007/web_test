@@ -98,5 +98,5 @@ eleventyComputed:
 </main>
 
 <script type="application/json" id="routes-data">{{ routes | dump | safe }}</script>
-<script defer src="assets/js/airports.js"></script>
-<script defer src="assets/js/fleet.js"></script>
+<script defer src="assets/js/airports.js?v={{ build.version }}"></script>
+<script defer src="assets/js/fleet.js?v={{ build.version }}"></script>
