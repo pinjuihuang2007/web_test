@@ -103,3 +103,5 @@ a { color: var(--fh-brand); }
 @media (max-width: 600px) { .route-map-big { height: 380px; } .fleet-h3 { font-size: 21px; } }
 #header .navbar a, #header .navbar a:focus { border-bottom-color: transparent; }
 #header .navbar a:hover, #header .navbar .active, #header .navbar li:hover > a { border-bottom-color: #c73a72; }
+.lv li.has-img { flex-direction: column; align-items: flex-start; gap: 6px; }
+.lv li.has-img img { width: 100%; height: auto; max-height: 150px; object-fit: contain; border-radius: 10px; background: rgba(255, 255, 255, .6); }

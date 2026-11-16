@@ -575,3 +575,7 @@ a:focus-visible, button:focus-visible, summary:focus-visible { outline: 3px soli
 html[data-theme="dark"] .fb-wx .wx { background: rgba(255, 255, 255, .1); color: #f1edfb; box-shadow: none; }
 html[data-theme="dark"] .fb-wx .wx-atis { color: #ffd479; }
 @media (max-width: 700px) { .fb-wx { padding: 8px 12px 0; } .fb-wx .wx { font-size: 10px; padding: 4px 6px; } }
+
+.ann-share { margin-top: 10px; font: inherit; font-size: 12.5px; padding: 5px 12px; border-radius: 999px; border: 1px solid var(--violet-l, #d9ccf2); background: transparent; color: var(--violet-d, #5a3fa0); cursor: pointer; }
+.ann-share:hover { background: var(--grad); color: #fff; border-color: transparent; }
+html[data-theme="dark"] .ann-share { color: #d9ccf2; border-color: rgba(182, 155, 230, .5); }
