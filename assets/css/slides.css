@@ -579,3 +579,21 @@ html[data-theme="dark"] .fb-wx .wx-atis { color: #ffd479; }
 .ann-share { margin-top: 10px; font: inherit; font-size: 12.5px; padding: 5px 12px; border-radius: 999px; border: 1px solid var(--violet-l, #d9ccf2); background: transparent; color: var(--violet-d, #5a3fa0); cursor: pointer; }
 .ann-share:hover { background: var(--grad); color: #fff; border-color: transparent; }
 html[data-theme="dark"] .ann-share { color: #d9ccf2; border-color: rgba(182, 155, 230, .5); }
+
+/* ===== 航班到離看板：黑色機殼（淺色、深色模式都一樣）===== */
+html body .flipboard { color: #fff; background: linear-gradient(180deg, #131316 0%, #050506 100%); border: 1px solid #2a2a30; box-shadow: 0 26px 56px rgba(20, 10, 40, .45), 0 3px 10px rgba(0, 0, 0, .35), inset 0 1px 0 rgba(255, 255, 255, .08); }
+html body .flipboard .fb-head { background: #0b0b0d; border-bottom: 1px solid #26262c; color: #f1f1f5; }
+html body .flipboard .fb-labels { color: #8d8d99; opacity: 1; }
+html body .flipboard .tile { color: #f5f5f7; }
+html body .flipboard .tile.st { color: #ff9ec4; }
+html body .flipboard .tile.cs { color: #ffd54a; }
+html body .flipboard .tile.fl, html body .flipboard .tile.gs { color: #b9b9c4; }
+html body .flipboard .tile .up, html body .flipboard .tile .ft { background: linear-gradient(180deg, #2a2a2f, #1c1c20); box-shadow: 0 -1px 0 rgba(255, 255, 255, .05); }
+html body .flipboard .tile .lo, html body .flipboard .tile .fb { background: linear-gradient(180deg, #19191d, #131316); box-shadow: 0 2px 3px rgba(0, 0, 0, .55); }
+html body .flipboard .tile::after { background: rgba(0, 0, 0, .95); }
+html body .flipboard .fb-foot { border-top-color: rgba(255, 255, 255, .16); }
+html body .flipboard .fb-atc-l { color: #ff9ec4; }
+html body .flipboard .fb-atc .chip, html body .flipboard .fb-wx .wx { color: #f1f1f5; background: rgba(255, 255, 255, .1); box-shadow: none; }
+html body .flipboard .fb-atc .none { color: #9a9aa6; }
+html body .flipboard .fb-wx .wx-atis { color: #ffd54a; }
+html body .flipboard .fb-msg { background: rgba(5, 5, 6, .86); color: #ecebf2; }
